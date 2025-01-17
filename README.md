@@ -24,7 +24,7 @@ The goal is to make this usable on the browser as a web app as well as on mobile
 - TBA
 
 ### ERD
-![Image](public/assets/image-1.png)
+![Image](public/assets/ERD.png)
 
 ## Resources
 - TBA
