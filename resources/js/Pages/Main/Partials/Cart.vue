@@ -6,7 +6,7 @@
       <tr>
         <th></th>
         <th scope="col" class="px-4 py-2">Product Name</th>
-        <th scope="col" class="px-4 py-2">Qty</th>
+        <th scope="col" class="px-4 py-2 text-center">Qty</th>
         <th scope="col" class="px-4 py-2">Amount</th>
       </tr>
     </thead>
@@ -38,7 +38,7 @@
             </button>
           </div>
         </td>
-        <td class="px-4 py-2">${{ (item.price * item.quantity).toFixed(2) }}</td>
+        <td class="px-4 py-2">₱{{ (item.price * item.quantity).toFixed(2) }}</td>
       </tr>
     </tbody>
   </table>
@@ -54,15 +54,8 @@
 </template>
 
 <script setup>
-import { computed, defineEmits, defineProps, inject } from 'vue'
+import { computed, defineEmits, inject } from 'vue'
 import { MinusIcon, PlusIcon, TrashIcon } from '@heroicons/vue/24/solid'
-
-const props = defineProps({
-  cart: {
-    type: Array,
-    required: true,
-  },
-})
 
 const emit = defineEmits()
 const cart = inject('cart')
@@ -72,8 +65,8 @@ const removeFromCart = (itemId) => {
 }
 
 const updateQuantity = (payload) => {
-  const { itemId, quantity } = payload
-  const existingItem = cart.value.find((item) => item.id === itemId)
+  const { id, quantity } = payload
+  const existingItem = cart.value.find((item) => item.id === id)
   if (existingItem) {
     const newQuantity = Math.max(quantity, 1)
     existingItem.quantity = Math.min(newQuantity, existingItem.stock)
@@ -85,7 +78,7 @@ const cartTotal = computed(() => {
 })
 
 const checkout = () => {
-  // Implement checkout logic here
+  // Checkout logic to be implemented
   console.log('Checkout:', cart.value)
   cart.value = []
 }

@@ -1,0 +1,246 @@
+<template>
+  <div 
+    v-if="isAlertOpen"
+    class="fixed top-4 right-4 bg-yellow-100 border-l-4 {{ alertDetails.type === 'success' ? 'border-green-500 text-green-700' : alertDetails.type === 'error' ? 'border-red-500 text-red-700' : 'border-yellow-500 text-yellow-700' }} p-4 rounded shadow-lg z-50"
+  >
+    <div class="flex items-center">
+      <div class="py-1">
+        <p>{{ alertDetails.message }}</p>
+      </div>
+      <button @click="closeAlert" class="ml-4">
+        <span class="text-yellow-700">&times;</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mb-4 grid grid-cols-6 gap-x-2">
+    <div class="col-span-5">
+      <label for="search" class="sr-only">Search products</label>
+      <div class="relative">
+        <input
+          id="search"
+          v-model="searchQuery"
+          type="text"
+          placeholder="Search products..."
+          class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" />
+        </div>
+      </div>
+    </div>
+    <button
+      @click="openAddModal"
+      class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+    >
+      <PlusIcon class="h-5 w-5 inline-block" /> Add
+    </button>
+  </div>
+  
+  <ul class="space-y-2">
+    <li
+      v-for="product in filteredProducts"
+      :key="product.id"
+      class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
+      @click="selectProduct(product)"
+      @mousedown="startLongPress(product)"
+      @mouseup="endLongPress"
+      @mouseleave="endLongPress"
+      @touchstart="startLongPress(product)"
+      @touchend="endLongPress"
+    >
+      <span>
+        {{ product.name }} <span class="text-gray-500 text-sm">(Available: {{ product.stock }})</span>
+      </span>
+      <span class="text-gray-600">₱{{ product.price.toFixed(2) }}</span>
+    </li>
+  </ul>
+
+  <ProductModal
+    :isModalOpen="isEditModalOpen"
+    :closeModal="closeEditModal"
+    :action="'editing'"
+    :positiveAction="saveProduct"
+    :negativeAction="archiveProduct"
+    :product="editingProduct"
+  />
+
+  <ProductModal
+    :isModalOpen="isAddModalOpen"
+    :closeModal="closeAddModal"
+    :action="'adding'"
+    :positiveAction="addNewProduct"
+    :negativeAction="resetFields"
+    :product="newProduct"
+  />
+</template>
+
+<script setup>
+import { inject, ref, computed, onUnmounted } from 'vue'
+import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon } from '@heroicons/vue/24/solid'
+import ProductModal from '@/Components/common/ProductModal.vue'
+
+const products = ref([
+  { id: 1, name: 'Coke (1.5L)', price: 70.00, stock: 15, description: 'Test Description', expiration: '2025-03-30' },
+  { id: 2, name: 'Coke (mismo)', price: 20.00, stock: 8, description: 'Test Description', expiration: '2025-03-25' },
+  { id: 3, name: 'Doowee Donut', price: 12.00, stock: 19, description: 'Test Description', expiration: '2025-03-28' },
+  { id: 4, name: 'Fudgee Bar', price: 10.00, stock: 5, description: 'Test Description', expiration: '2025-03-15' },
+  { id: 5, name: 'Top Coffee - Brown Palm Sugar (3s)', price: 14.00, stock: 30, description: 'Test Description', expiration: '2025-06-05' },
+  { id: 6, name: 'Four Seasons (1L)', price: 98.00, stock: 0, description: 'Test Description', expiration: '2025-04-10' },
+])
+const cart = inject('cart')
+const searchQuery = ref('')
+const isAlertOpen = ref(false)
+const isEditModalOpen = ref(false)
+const isAddModalOpen = ref(false)
+const editingProduct = ref(null)
+const newProduct = ref({
+  name: '',
+  description: '',
+  price: 0,
+  stock: 0,
+  expiration: ''
+})
+const longPressTimer = ref(null)
+const longPressDuration = 500 // ms
+const alertDetails = ref({
+  message: '',
+  type: '',
+})
+const alertTimeout = ref(null)
+
+const filteredProducts = computed(() => {
+  if (!searchQuery.value) return products.value
+  const query = searchQuery.value.toLowerCase()
+  return products.value.filter(product => product.name.toLowerCase().includes(query))
+})
+
+const alertPopup = (message, type, duration = 3000) => {
+  alertDetails.value.message = message
+  alertDetails.value.type = type ?? 'success'
+  isAlertOpen.value = true
+  
+  if (alertTimeout.value) {
+    clearTimeout(alertTimeout.value)
+  }
+  
+  alertTimeout.value = setTimeout(() => {
+    closeAlert()
+  }, duration)
+}
+
+const closeAlert = () => {
+  isAlertOpen.value = false
+  alertDetails.value = ''
+}
+
+const addToCart = (product) => {
+  const existingItem = cart.value.find(item => item.id === product.id)
+  const sufficientStock = product.stock > 0
+  // to fix: when product stock is 0, this re-adds the product to the cart as a new item
+  // likewise, if product qty in cart has exceeded the stock, this also readds the product as a new line
+  if (existingItem && sufficientStock) {
+    existingItem.quantity++
+    product.stock--
+    alertPopup(`Added ${product.name} to cart`, 'success')
+  } else if (!existingItem && sufficientStock) {
+    product.stock--
+    cart.value.push({ ...product, quantity: 1 })
+    alertPopup(`Added ${product.name} to cart`, 'success')
+  } else {
+    alertPopup('Insufficient stock!', 'error', 5000)
+  }
+}
+
+const openAddModal = () => {
+  isAddModalOpen.value = true
+}
+
+const closeAddModal = () => {
+  isAddModalOpen.value = false
+  newProduct.value = {
+    name: '',
+    description: '',
+    price: 0,
+    stock: 0,
+    expiration: ''
+  }
+}
+
+const addNewProduct = () => {
+  const id = Math.max(...products.value.map(p => p.id)) + 1
+  products.value.push({
+    id,
+    ...newProduct.value,
+    price: parseFloat(newProduct.value.price),
+    stock: parseInt(newProduct.value.stock)
+  })
+  closeAddModal()
+}
+
+const resetFields = () => {
+  newProduct.value = {
+    name: '',
+    description: '',
+    price: 0,
+    stock: 0,
+    expiration: ''
+  }
+}
+
+const selectProduct = (product) => {
+  addToCart(product)
+}
+
+const startLongPress = (product) => {
+  longPressTimer.value = setTimeout(() => {
+    openEditModal(product)
+  }, longPressDuration)
+}
+
+const endLongPress = () => {
+  if (longPressTimer.value) {
+    clearTimeout(longPressTimer.value)
+  }
+}
+
+const openEditModal = (product) => {
+  editingProduct.value = { ...product }
+  isEditModalOpen.value = true
+}
+
+const closeEditModal = () => {
+  isEditModalOpen.value = false
+  setTimeout(() => {
+    editingProduct.value = null
+  }, 300)
+}
+
+const saveProduct = () => {
+  if (editingProduct.value) {
+    const index = products.value.findIndex(p => p.id === editingProduct.value.id)
+    if (index !== -1) {
+      products.value[index] = { ...editingProduct.value }
+    }
+  }
+  closeEditModal()
+}
+
+const archiveProduct = () => {
+  if (editingProduct.value) {
+    products.value = products.value.filter(p => p.id !== editingProduct.value.id)
+  }
+  closeEditModal()
+}
+
+// Clean up long press timer
+onUnmounted(() => {
+  if (longPressTimer.value) {
+    clearTimeout(longPressTimer.value)
+  }
+  if (alertTimeout.value) {
+    clearTimeout(alertTimeout.value)
+  }
+})
+</script>

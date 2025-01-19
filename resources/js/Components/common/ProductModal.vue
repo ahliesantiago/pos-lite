@@ -50,13 +50,18 @@
                   </div>
                   <div>
                     <label for="productPrice" class="block text-sm font-medium text-gray-700">Price</label>
-                    <input
-                      id="productPrice"
-                      v-model="product.price"
-                      type="number"
-                      step="0.01"
-                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
+                    <div class="mt-1 flex items-center">
+                      <span class="bg-gray-200 text-gray-600 py-2 px-2 rounded-l-md border-t border-b border-gray-300">
+                        ₱
+                      </span>
+                      <input
+                        id="productPrice"
+                        v-model="formattedPrice"
+                        type="number"
+                        step="1"
+                        class="block w-full rounded-r-md border-l-0 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label for="productStock" class="block text-sm font-medium text-gray-700">Available Stock</label>
@@ -120,7 +125,7 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
+import { computed, defineProps } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 
 const props = defineProps({
@@ -130,6 +135,14 @@ const props = defineProps({
   positiveAction: Function,
   negativeAction: Function,
   product: Object,
+})
+
+const formattedPrice = computed({
+  get: () => props.product.price.toFixed(2),
+  set: (value) => {
+    const parsed = parseFloat(value)
+    props.product.price = isNaN(parsed) ? 0 : parsed
+  },
 })
 
 </script>
