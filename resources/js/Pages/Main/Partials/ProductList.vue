@@ -1,18 +1,4 @@
 <template>
-  <div 
-    v-if="isAlertOpen"
-    class="fixed top-4 right-4 bg-yellow-100 border-l-4 {{ alertDetails.type === 'success' ? 'border-green-500 text-green-700' : alertDetails.type === 'error' ? 'border-red-500 text-red-700' : 'border-yellow-500 text-yellow-700' }} p-4 rounded shadow-lg z-50"
-  >
-    <div class="flex items-center">
-      <div class="py-1">
-        <p>{{ alertDetails.message }}</p>
-      </div>
-      <button @click="closeAlert" class="ml-4">
-        <span class="text-yellow-700">&times;</span>
-      </button>
-    </div>
-  </div>
-
   <div class="mb-4 grid grid-cols-6 gap-x-2">
     <div class="col-span-5">
       <label for="search" class="sr-only">Search products</label>
@@ -81,17 +67,9 @@ import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import { PlusIcon } from '@heroicons/vue/24/solid'
 import ProductModal from '@/Components/common/ProductModal.vue'
 
-const products = ref([
-  { id: 1, name: 'Coke (1.5L)', price: 70.00, stock: 15, description: 'Test Description', expiration: '2025-03-30' },
-  { id: 2, name: 'Coke (mismo)', price: 20.00, stock: 8, description: 'Test Description', expiration: '2025-03-25' },
-  { id: 3, name: 'Doowee Donut', price: 12.00, stock: 19, description: 'Test Description', expiration: '2025-03-28' },
-  { id: 4, name: 'Fudgee Bar', price: 10.00, stock: 5, description: 'Test Description', expiration: '2025-03-15' },
-  { id: 5, name: 'Top Coffee - Brown Palm Sugar (3s)', price: 14.00, stock: 30, description: 'Test Description', expiration: '2025-06-05' },
-  { id: 6, name: 'Four Seasons (1L)', price: 98.00, stock: 0, description: 'Test Description', expiration: '2025-04-10' },
-])
+const products = inject('products')
 const cart = inject('cart')
 const searchQuery = ref('')
-const isAlertOpen = ref(false)
 const isEditModalOpen = ref(false)
 const isAddModalOpen = ref(false)
 const editingProduct = ref(null)
@@ -104,11 +82,8 @@ const newProduct = ref({
 })
 const longPressTimer = ref(null)
 const longPressDuration = 500 // ms
-const alertDetails = ref({
-  message: '',
-  type: '',
-})
-const alertTimeout = ref(null)
+
+const { alertPopup } = inject('alert')
 
 const filteredProducts = computed(() => {
   if (!searchQuery.value) return products.value
@@ -116,30 +91,9 @@ const filteredProducts = computed(() => {
   return products.value.filter(product => product.name.toLowerCase().includes(query))
 })
 
-const alertPopup = (message, type, duration = 3000) => {
-  alertDetails.value.message = message
-  alertDetails.value.type = type ?? 'success'
-  isAlertOpen.value = true
-  
-  if (alertTimeout.value) {
-    clearTimeout(alertTimeout.value)
-  }
-  
-  alertTimeout.value = setTimeout(() => {
-    closeAlert()
-  }, duration)
-}
-
-const closeAlert = () => {
-  isAlertOpen.value = false
-  alertDetails.value = ''
-}
-
 const addToCart = (product) => {
   const existingItem = cart.value.find(item => item.id === product.id)
   const sufficientStock = product.stock > 0
-  // to fix: when product stock is 0, this re-adds the product to the cart as a new item
-  // likewise, if product qty in cart has exceeded the stock, this also readds the product as a new line
   if (existingItem && sufficientStock) {
     existingItem.quantity++
     product.stock--
@@ -176,6 +130,7 @@ const addNewProduct = () => {
     price: parseFloat(newProduct.value.price),
     stock: parseInt(newProduct.value.stock)
   })
+  alertPopup('Product added successfully', 'success')
   closeAddModal()
 }
 
@@ -222,6 +177,7 @@ const saveProduct = () => {
     const index = products.value.findIndex(p => p.id === editingProduct.value.id)
     if (index !== -1) {
       products.value[index] = { ...editingProduct.value }
+      alertPopup('Product updated successfully', 'success')
     }
   }
   closeEditModal()
@@ -230,6 +186,7 @@ const saveProduct = () => {
 const archiveProduct = () => {
   if (editingProduct.value) {
     products.value = products.value.filter(p => p.id !== editingProduct.value.id)
+    alertPopup('Product archived successfully', 'success')
   }
   closeEditModal()
 }
@@ -238,9 +195,6 @@ const archiveProduct = () => {
 onUnmounted(() => {
   if (longPressTimer.value) {
     clearTimeout(longPressTimer.value)
-  }
-  if (alertTimeout.value) {
-    clearTimeout(alertTimeout.value)
   }
 })
 </script>

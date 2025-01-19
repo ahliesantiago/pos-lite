@@ -19,6 +19,18 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/inventory', function () {
+    return Inertia::render('Products/Inventory');
+})->name('inventory');
+
+Route::get('/orders', function () {
+    return Inertia::render('Orders/Orders');
+})->name('orders');
+
+Route::get('/records', function () {
+    return Inertia::render('History/Records');
+})->name('records');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

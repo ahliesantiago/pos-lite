@@ -6,12 +6,18 @@
   <div class="flex w-full">
     <div class="grid grid-cols-4 w-full">
       <div v-for="item in navItems" :key="item.name">
-        <button :class="`w-full p-5 shadow focus:outline-none focus:ring-2 ${item.colors}`">
-          <div class="flex flex-col items-center gap-x-1 text-white font-medium">
+        <Link
+          :href="route(item.route)"
+          as="button"
+          :class="`w-full p-5 shadow focus:outline-none focus:ring-2
+            ${route().current(item.route) ? 'bg-gray-100 border border-gray-500' : item.colors}
+          `"
+        >
+          <div :class="`flex flex-col items-center gap-x-1 ${route().current(item.route) ? 'text-black' : 'text-white'} font-medium`">
             <component :is="item.icon" class="h-5 w-5" />
             {{ item.name }}
           </div>
-        </button>
+        </Link>
       </div>
     </div>
   </div>
@@ -19,7 +25,8 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { DocumentChartBarIcon, ClipboardDocumentListIcon, CreditCardIcon, ShoppingCartIcon } from '@heroicons/vue/24/outline'
+import { Link } from '@inertiajs/vue3'
+import { DocumentChartBarIcon, ClipboardDocumentListIcon, Cog6ToothIcon, CreditCardIcon, ShoppingCartIcon } from '@heroicons/vue/24/outline'
 
 let time = ref(null)
 const currentDateTime = ref(new Date())
@@ -30,10 +37,37 @@ const formattedDateTime = computed(() => {
 })
 
 const navItems = [
-  { name: 'Cart', icon: ShoppingCartIcon, colors: 'bg-orange-500 hover:bg-orange-600 focus:ring-orange-500' },
-  { name: 'Inventory', icon: ClipboardDocumentListIcon, colors: 'bg-green-500 hover:bg-green-600 focus:ring-green-500' },
-  { name: 'Pending Orders', icon: CreditCardIcon, colors: 'bg-blue-500 hover:bg-blue-600 focus:ring-blue-500' },
-  { name: 'Records', icon: DocumentChartBarIcon, colors: 'bg-purple-500 hover:bg-purple-600 focus:ring-purple-500' },
+  { 
+    name: 'Cart', 
+    icon: ShoppingCartIcon, 
+    colors: 'bg-orange-500 hover:bg-orange-600 focus:ring-orange-500',
+    route: 'dashboard'
+  },
+  { 
+    name: 'Inventory', 
+    icon: ClipboardDocumentListIcon, 
+    colors: 'bg-green-500 hover:bg-green-600 focus:ring-green-500',
+    route: 'inventory'
+  },
+  { 
+    name: 'Pending Orders', 
+    icon: CreditCardIcon, 
+    colors: 'bg-blue-500 hover:bg-blue-600 focus:ring-blue-500',
+    route: 'orders'
+  },
+  { 
+    name: 'Records', 
+    icon: DocumentChartBarIcon, 
+    colors: 'bg-purple-500 hover:bg-purple-600 focus:ring-purple-500',
+    route: 'records'
+  },
+  { 
+    name: 'Settings', 
+    icon: Cog6ToothIcon, 
+    colors: 'bg-amber-900 hover:bg-amber-900 focus:ring-amber-900',
+    colSpan: 'col-span-2',
+    route: 'records'
+  },
 ]
 
 // Real-time clock
