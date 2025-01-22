@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_type_id')->constrained();
+            $table->string('customer_name')->nullable();
             $table->boolean('is_paid')->default(false);
             $table->boolean('is_discounted')->default(false);
             $table->integer('discount_type')->nullable();
