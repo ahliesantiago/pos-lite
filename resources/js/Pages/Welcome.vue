@@ -73,7 +73,7 @@ const form = useForm({
   username: 'admin',
   password: '',
   remember: false,
-})
+});
 
 const showPassword = ref(false);
 const togglePasswordVisibility = () => {

@@ -54,59 +54,59 @@
 </template>
 
 <script setup>
-import { computed, defineEmits, inject } from 'vue'
-import { MinusIcon, PlusIcon, TrashIcon } from '@heroicons/vue/24/solid'
+import { computed, defineEmits, inject } from 'vue';
+import { MinusIcon, PlusIcon, TrashIcon } from '@heroicons/vue/24/solid';
 
-const emit = defineEmits()
-const cart = inject('cart')
-const products = inject('products')
-const { alertPopup } = inject('alert')
+const emit = defineEmits();
+const cart = inject('cart');
+const products = inject('products');
+const { alertPopup } = inject('alert');
 
 const removeFromCart = (itemId) => {
-  const item = cart.value.find(item => item.id === itemId)
+  const item = cart.value.find(item => item.id === itemId);
   if (item) {
-    const product = products.value.find(p => p.id === itemId)
+    const product = products.value.find(p => p.id === itemId);
     if (product) {
-      product.stock += item.quantity
+      product.stock += item.quantity;
     }
-    cart.value = cart.value.filter(item => item.id !== itemId)
-    alertPopup('Item removed from cart', 'success')
+    cart.value = cart.value.filter((item) => item.id !== itemId);
+    alertPopup('Item removed from cart', 'success');
   }
-}
+};
 
 const updateQuantity = (payload) => {
-  const { id, quantity } = payload
-  const existingItem = cart.value.find((item) => item.id === id)
-  const product = products.value.find((p) => p.id === id)
+  const { id, quantity } = payload;
+  const existingItem = cart.value.find((item) => item.id === id);
+  const product = products.value.find((p) => p.id === id);
   
   if (existingItem && product) {
-    const quantityDiff = quantity - existingItem.quantity
+    const quantityDiff = quantity - existingItem.quantity;
     // Check if product stock is sufficient
     if (product.stock >= -quantityDiff || quantityDiff < 0) {
-      const newQuantity = Math.max(quantity, 1)
-      const oldQuantity = existingItem.quantity
-      existingItem.quantity = Math.min(newQuantity, oldQuantity + product.stock)
+      const newQuantity = Math.max(quantity, 1);
+      const oldQuantity = existingItem.quantity;
+      existingItem.quantity = Math.min(newQuantity, oldQuantity + product.stock);
       // Update product stock
-      product.stock -= (existingItem.quantity - oldQuantity)
-      alertPopup('Quantity updated successfully', 'success')
+      product.stock -= (existingItem.quantity - oldQuantity);
+      alertPopup('Quantity updated successfully', 'success');
     } else {
-      alertPopup('Insufficient stock!', 'error')
+      alertPopup('Insufficient stock!', 'error');
     }
   }
-}
+};
 
 const cartTotal = computed(() => {
-  return cart.value.reduce((total, item) => total + item.price * item.quantity, 0)
-})
+  return cart.value.reduce((total, item) => total + item.price * item.quantity, 0);
+});
 
 const checkout = () => {
   if (cart.value.length === 0) {
-    alertPopup('Cart is empty!', 'error')
-    return
+    alertPopup('Cart is empty!', 'error');
+    return;
   }
   // TO ADD: Checkout logic
-  console.log('Checkout:', cart.value)
-  cart.value = []
-  alertPopup('Checkout successful!', 'success')
-}
+  console.log('Checkout:', cart.value);
+  cart.value = [];
+  alertPopup('Checkout successful!', 'success');
+};
 </script>
