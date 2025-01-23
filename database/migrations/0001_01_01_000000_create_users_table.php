@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->boolean('isAdmin')->default(false);
             $table->string('password');
-            $table->string('remember_token', 100);
             $table->rememberToken();
             $table->timestamps();
         });
