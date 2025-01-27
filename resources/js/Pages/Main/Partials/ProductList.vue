@@ -1,66 +1,3 @@
-<template>
-  <div class="mb-4 grid grid-cols-6 gap-x-2">
-    <div class="col-span-5">
-      <label for="search" class="sr-only">Search products</label>
-      <div class="relative">
-        <input
-          id="search"
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search products..."
-          class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" />
-        </div>
-      </div>
-    </div>
-    <button
-      @click="openAddModal"
-      class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
-    >
-      <PlusIcon class="h-5 w-5 inline-block" /> Add
-    </button>
-  </div>
-  
-  <ul class="space-y-2">
-    <li
-      v-for="product in filteredProducts"
-      :key="product.id"
-      class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
-      @click="selectProduct(product)"
-      @mousedown="startLongPress(product)"
-      @mouseup="endLongPress"
-      @mouseleave="endLongPress"
-      @touchstart="startLongPress(product)"
-      @touchend="endLongPress"
-    >
-      <span>
-        {{ product.name }} <span class="text-gray-500 text-sm">(Available: {{ product.stock }})</span>
-      </span>
-      <span class="text-gray-600">₱{{ product.price.toFixed(2) }}</span>
-    </li>
-  </ul>
-
-  <ProductModal
-    :isModalOpen="isEditModalOpen"
-    :closeModal="closeEditModal"
-    :action="'editing'"
-    :positiveAction="saveProduct"
-    :negativeAction="archiveProduct"
-    :product="editingProduct"
-  />
-
-  <ProductModal
-    :isModalOpen="isAddModalOpen"
-    :closeModal="closeAddModal"
-    :action="'adding'"
-    :positiveAction="addNewProduct"
-    :negativeAction="resetFields"
-    :product="newProduct"
-  />
-</template>
-
 <script setup>
 import { inject, ref, computed, onUnmounted } from 'vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
@@ -198,3 +135,66 @@ onUnmounted(() => {
   }
 });
 </script>
+
+<template>
+  <div class="mb-4 grid grid-cols-6 gap-x-2">
+    <div class="col-span-5">
+      <label for="search" class="sr-only">Search products</label>
+      <div class="relative">
+        <input
+          id="search"
+          v-model="searchQuery"
+          type="text"
+          placeholder="Search products..."
+          class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" />
+        </div>
+      </div>
+    </div>
+    <button
+      @click="openAddModal"
+      class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+    >
+      <PlusIcon class="h-5 w-5 inline-block" /> Add
+    </button>
+  </div>
+  
+  <ul class="space-y-2">
+    <li
+      v-for="product in filteredProducts"
+      :key="product.id"
+      class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
+      @click="selectProduct(product)"
+      @mousedown="startLongPress(product)"
+      @mouseup="endLongPress"
+      @mouseleave="endLongPress"
+      @touchstart="startLongPress(product)"
+      @touchend="endLongPress"
+    >
+      <span>
+        {{ product.name }} <span class="text-gray-500 text-sm">(Available: {{ product.stock }})</span>
+      </span>
+      <span class="text-gray-600">₱{{ product.price.toFixed(2) }}</span>
+    </li>
+  </ul>
+
+  <ProductModal
+    :isModalOpen="isEditModalOpen"
+    :closeModal="closeEditModal"
+    :action="'editing'"
+    :positiveAction="saveProduct"
+    :negativeAction="archiveProduct"
+    :product="editingProduct"
+  />
+
+  <ProductModal
+    :isModalOpen="isAddModalOpen"
+    :closeModal="closeAddModal"
+    :action="'adding'"
+    :positiveAction="addNewProduct"
+    :negativeAction="resetFields"
+    :product="newProduct"
+  />
+</template>

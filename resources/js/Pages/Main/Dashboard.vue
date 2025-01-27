@@ -1,17 +1,3 @@
-<template>
-  <Head title="Dashboard" />
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
-    <Alert />
-    <div class="md:col-span-2 bg-white rounded-lg shadow p-4">
-      <ProductList />
-    </div>
-    
-    <div class="bg-white rounded-lg shadow p-4">
-      <Cart />
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { ref, provide } from 'vue';
 import { Head } from '@inertiajs/vue3';
@@ -36,3 +22,17 @@ provide('alert', alert);
 provide('cart', cart);
 provide('products', products);
 </script>
+
+<template>
+  <Head title="Dashboard" />
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
+    <Alert />
+    <div class="md:col-span-2 bg-white rounded-lg shadow p-4">
+      <ProductList />
+    </div>
+    
+    <div class="bg-white rounded-lg shadow p-4">
+      <Cart />
+    </div>
+  </div>
+</template>

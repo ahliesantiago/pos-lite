@@ -1,3 +1,45 @@
+<script setup lang='ts'>
+import { ref } from 'vue';
+import { Head, useForm } from '@inertiajs/vue3';
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline';
+
+const props = defineProps<{
+  isLoggedIn: boolean;
+  username?: string;
+  isAdminDefaultPassword?: boolean;
+}>();
+
+const form = useForm({
+  username: props.username || '',
+  password: '',
+  remember: false,
+});
+
+const showPassword = ref(false);
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value;
+};
+
+// TO-DO
+const submit = () => {
+  form.post(route('login'), {
+    onFinish: () => {
+      form.reset();
+    },
+  });
+};
+const resetPassword = () => {
+  form.post(route('password.reset'), {
+    onFinish: () => {
+      form.reset();
+    },
+  });
+};
+</script>
+
 <template>
   <Head title='Welcome' />
   <div class='flex justify-center items-center'>
@@ -60,45 +102,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang='ts'>
-import { ref } from 'vue';
-import { Head, useForm } from '@inertiajs/vue3';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline';
-
-const props = defineProps<{
-  isLoggedIn: boolean;
-  username?: string;
-  isAdminDefaultPassword?: boolean;
-}>();
-
-const form = useForm({
-  username: props.username || '',
-  password: '',
-  remember: false,
-});
-
-const showPassword = ref(false);
-const togglePasswordVisibility = () => {
-  showPassword.value = !showPassword.value;
-};
-
-// TO-DO
-const submit = () => {
-  form.post(route('login'), {
-    onFinish: () => {
-      form.reset();
-    },
-  });
-};
-const resetPassword = () => {
-  form.post(route('password.reset'), {
-    onFinish: () => {
-      form.reset();
-    },
-  });
-};
-</script>
