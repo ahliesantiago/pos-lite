@@ -1,9 +1,12 @@
 <template>
   <div class="flex justify-between items-center bg-slate-200 px-4 py-1">
     <h1 class="text-2xl font-bold text-gray-900">POS-Lite</h1>
-    <h2 class="text-sm">{{ formattedDateTime }}</h2>
+    <h2 class="text-sm sm:block hidden">{{ formattedDateTime }}</h2>
+    <Bars3Icon
+      class="h-6 w-6 sm:hidden"
+    />
   </div>
-  <div class="flex w-full">
+  <div class="min-[645px]:flex w-full hidden">
     <div class="grid w-full" :style="{ gridTemplateColumns: gridColumns }">
       <div v-for="item in navItems" :key="item.name">
         <Link
@@ -26,7 +29,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Link } from '@inertiajs/vue3';
-import { DocumentChartBarIcon, ClipboardDocumentListIcon, Cog6ToothIcon, CreditCardIcon, ShoppingCartIcon } from '@heroicons/vue/24/outline';
+import { Bars3Icon, DocumentChartBarIcon, ClipboardDocumentListIcon, Cog6ToothIcon, CreditCardIcon, ShoppingCartIcon } from '@heroicons/vue/24/outline';
 
 let time = ref(null);
 const currentDateTime = ref(new Date());

@@ -1,14 +1,40 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
+    $isLoggedIn = false;
+    $username = null;
+    $isAdminDefaultPassword = false;
+
+    if (Auth::check()) {
+        // User is logged in
+        $isLoggedIn = true;
+        $user = Auth::user();
+        $username = $user->username;
+
+        // Check if the user is the admin and has the default password
+        if ($user->username === 'admin' && password_verify('admin', $user->password)) {
+            $isAdminDefaultPassword = true;
+            // Render the Welcome component for admin with default password
+            return Inertia::render('Welcome', [
+                'isLoggedIn' => $isLoggedIn,
+                'username' => $username,
+                'isAdminDefaultPassword' => $isAdminDefaultPassword,
+            ]);
+        }
+
+        // Redirect to dashboard for other users or if admin password is not default
+        return redirect()->route('dashboard');
+    }
+
+    // User is not logged in
     return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
+        'isLoggedIn' => $isLoggedIn,
+        'username' => $username,
+        'isAdminDefaultPassword' => $isAdminDefaultPassword,
     ]);
 });
 
@@ -28,11 +54,5 @@ Route::get('/orders', function () {
 Route::get('/records', function () {
     return Inertia::render('History/Records');
 })->name('records');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
 require __DIR__.'/auth.php';
