@@ -8,6 +8,7 @@ const props = defineProps<{
   isLoggedIn: boolean;
   username?: string;
   isPasswordDefault?: boolean;
+  isResettingPassword?: boolean;
 }>();
 
 const form = useForm({
@@ -26,7 +27,7 @@ const togglePasswordVisibility = () => {
 };
 
 const submit = () => {
-  if (props.isPasswordDefault) {
+  if (props.isPasswordDefault || props.isResettingPassword) {
     resetPassword();
   } else {
     login();
@@ -65,7 +66,7 @@ const resetPassword = () => {
           P.S. Your password cannot be "password".
         </p>
 
-        <form @submit.prevent="submit" class="flex flex-col gap-3" v-if="!isLoggedIn || isPasswordDefault">
+        <form @submit.prevent="submit" class="flex flex-col gap-3" v-if="!isLoggedIn || isPasswordDefault || isResettingPassword">
           <div>
             <label for="username" class="block text-sm font-medium text-gray-600">Username</label>
             <input
@@ -82,7 +83,7 @@ const resetPassword = () => {
             </p>
           </div>
           <div>
-            <label for="password" class="block text-sm font-medium text-gray-600">Password</label>
+            <label for="password" class="block text-sm font-medium text-gray-600">{{ (isPasswordDefault || isResettingPassword) ? 'New ' : '' }}Password</label>
             <div class="relative mt-1 mx-auto w-full sm:w-2/3 lg:w-1/2">
               <input
                 id="password"
