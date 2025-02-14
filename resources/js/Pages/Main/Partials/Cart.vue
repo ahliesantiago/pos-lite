@@ -27,13 +27,15 @@ const updateQuantity = (payload) => {
   if (existingItem && product) {
     const quantityDiff = quantity - existingItem.quantity;
     // Check if product stock is sufficient
-    if (product.stock >= -quantityDiff || quantityDiff < 0) {
+    if (product.stock >= quantityDiff && quantity >= 1) {
       const newQuantity = Math.max(quantity, 1);
       const oldQuantity = existingItem.quantity;
       existingItem.quantity = Math.min(newQuantity, oldQuantity + product.stock);
       // Update product stock
       product.stock -= (existingItem.quantity - oldQuantity);
       alertPopup('Quantity updated successfully', 'success');
+    } else if (quantity <= 0) {
+      alertPopup('Unable to decrease further', 'error');
     } else {
       alertPopup('Insufficient stock!', 'error');
     }
