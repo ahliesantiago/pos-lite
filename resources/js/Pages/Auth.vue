@@ -108,7 +108,7 @@ const resetPassword = () => {
               </div>
             </div>
             <p class="text-sm text-red-600 dark:text-red-400">
-              {{ form.errors.username }}
+              {{ form.errors.password }}
             </p>
           </div>
           <div>

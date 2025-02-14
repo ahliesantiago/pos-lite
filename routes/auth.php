@@ -16,8 +16,10 @@ Route::middleware('guest')->group(function () {
     Route::post('users/login', [UserController::class, 'authenticate']);
 });
 
-Route::get('users/reset-password', [PasswordController::class, 'create'])
+Route::get('users/reset-password', [PasswordController::class, 'edit'])
     ->name('password.reset');
+
+Route::post('users/reset-password', [PasswordController::class, 'update']);
 
 Route::middleware('auth')->group(function () {
     Route::post('users/logout', [UserController::class, 'destroy'])
