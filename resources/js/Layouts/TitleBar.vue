@@ -1,5 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { Bars3Icon } from '@heroicons/vue/24/outline';
+
 let time = ref(null);
 const currentDateTime = ref(new Date());
 const formattedDateTime = computed(() => {

@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
-import { ArrowLeftStartOnRectangleIcon, Bars3Icon, DocumentChartBarIcon, ClipboardDocumentListIcon, Cog6ToothIcon, CreditCardIcon, ShoppingCartIcon } from '@heroicons/vue/24/outline';
+import { ArrowLeftStartOnRectangleIcon, DocumentChartBarIcon, ClipboardDocumentListIcon, Cog6ToothIcon, CreditCardIcon, ShoppingCartIcon } from '@heroicons/vue/24/outline';
 
 const navItems = [
   { 
