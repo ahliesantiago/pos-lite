@@ -58,7 +58,7 @@ const formattedPrice = computed({
                       id="productName"
                       v-model="product.name"
                       type="text"
-                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -67,13 +67,13 @@ const formattedPrice = computed({
                       id="productDescription"
                       v-model="product.description"
                       rows="3"
-                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     ></textarea>
                   </div>
                   <div>
                     <label for="productPrice" class="block text-sm font-medium text-gray-700">Price</label>
                     <div class="mt-1 flex items-center">
-                      <span class="bg-gray-200 text-gray-600 py-2 px-2 rounded-l-md border-t border-b border-gray-300">
+                      <span class="bg-gray-200 text-gray-600 p-2 rounded-l-md border-t border-b border border-gray-300">
                         ₱
                       </span>
                       <input
@@ -81,7 +81,7 @@ const formattedPrice = computed({
                         v-model="formattedPrice"
                         type="number"
                         step="1"
-                        class="block w-full rounded-r-md border-l-0 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        class="block p-2 w-full rounded-r-md border-l-0 border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                       />
                     </div>
                   </div>
@@ -91,7 +91,7 @@ const formattedPrice = computed({
                       id="productStock"
                       v-model="product.stock"
                       type="number"
-                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     />
                   </div>
                   <div>
@@ -100,7 +100,7 @@ const formattedPrice = computed({
                       id="productExpiration"
                       v-model="product.expiration"
                       type="date"
-                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     />
                   </div>
                 </div>
