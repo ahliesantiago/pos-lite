@@ -1,3 +1,10 @@
+<script setup>
+import { inject } from 'vue'
+
+const alert = inject('alert')
+const { isAlertOpen, alertDetails, closeAlert } = alert
+</script>
+
 <template>
   <div 
     v-if="isAlertOpen"
@@ -18,10 +25,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { inject } from 'vue'
-
-const alert = inject('alert')
-const { isAlertOpen, alertDetails, closeAlert } = alert
-</script>

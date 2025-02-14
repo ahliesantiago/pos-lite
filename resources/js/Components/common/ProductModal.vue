@@ -1,3 +1,25 @@
+<script setup>
+import { computed, defineProps } from 'vue'
+import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
+
+const props = defineProps({
+  isModalOpen: Boolean,
+  closeModal: Function,
+  action: String,
+  positiveAction: Function,
+  negativeAction: Function,
+  product: Object,
+})
+
+const formattedPrice = computed({
+  get: () => props.product.price.toFixed(2),
+  set: (value) => {
+    const parsed = parseFloat(value)
+    props.product.price = isNaN(parsed) ? 0 : parsed
+  },
+})
+</script>
+
 <template>
   <TransitionRoot appear :show="isModalOpen" as="template">
     <Dialog as="div" @close="closeModal" class="relative z-10">
@@ -123,26 +145,3 @@
     </Dialog>
   </TransitionRoot>
 </template>
-
-<script setup>
-import { computed, defineProps } from 'vue'
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
-
-const props = defineProps({
-  isModalOpen: Boolean,
-  closeModal: Function,
-  action: String,
-  positiveAction: Function,
-  negativeAction: Function,
-  product: Object,
-})
-
-const formattedPrice = computed({
-  get: () => props.product.price.toFixed(2),
-  set: (value) => {
-    const parsed = parseFloat(value)
-    props.product.price = isNaN(parsed) ? 0 : parsed
-  },
-})
-
-</script>
