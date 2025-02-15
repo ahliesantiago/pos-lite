@@ -18,10 +18,10 @@ return new class extends Migration
             $table->string('brand');
             $table->string('description')->nullable();
             $table->decimal('price', 10, 2);
-            $table->decimal('discounted_price_1', 10, 2);
-            $table->decimal('discounted_price_2', 10, 2);
-            $table->decimal('discounted_price_3', 10, 2);
-            $table->decimal('purchase_wholesale_price', 10, 2);
+            $table->decimal('discounted_price_1', 10, 2)->nullable();
+            $table->decimal('discounted_price_2', 10, 2)->nullable();
+            $table->decimal('discounted_price_3', 10, 2)->nullable();
+            $table->decimal('purchase_wholesale_price', 10, 2)->nullable();
             $table->integer('stocks')->default(0);
             $table->dateTime('closest_expiration_date')->nullable();
             $table->timestamps();

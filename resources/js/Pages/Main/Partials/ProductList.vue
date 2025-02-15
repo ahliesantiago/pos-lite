@@ -1,8 +1,9 @@
 <script setup>
-import { inject, ref, computed, onUnmounted } from 'vue';
+import { computed, inject, onMounted, onUnmounted, ref } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import { ArrowUpTrayIcon, PlusIcon } from '@heroicons/vue/24/solid';
+import { fetchProductTypes } from '@/Composables/useProductOperations';
 import ProductModal from '@/Components/common/ProductModal.vue';
 
 defineProps({
@@ -10,10 +11,11 @@ defineProps({
 });
 
 const { alertPopup } = inject('alert');
-const errors = ref({});
 const products = inject('products');
+const categories = ref([]);
 const form = useForm({
   product_name: '',
+  product_type_id: 1,
   brand: '',
   description: '',
   price: null,
@@ -38,20 +40,18 @@ const closeAddModal = () => {
 };
 
 const addNewProduct = () => {
-  errors.value = {}; // Reset previous errors, if any
-    form.post('/products', {
-      preserveScroll: true,
-      onSuccess: () => {
-        alertPopup('Product added successfully', 'success');
-        closeAddModal();
-        form.reset();
-        fetchProducts();
-      },
-      onError: (error) => {
-        alertPopup('Failed to add product, please try again later.');
-        console.error('Failed to add product', error);
-      }
-    });
+  form.post('/products', {
+    preserveScroll: true,
+    onSuccess: () => {
+      alertPopup('Product added successfully', 'success');
+      closeAddModal();
+      form.reset();
+      // fetchProducts();
+    },
+    onError: (error) => {
+      alertPopup('Failed to add product', 'error');
+    }
+  });
 };
 
 const selectProduct = (product) => {
@@ -123,6 +123,14 @@ const addToCart = (product) => {
   }
 };
 
+onMounted(async () => {
+  try {
+    categories.value = await fetchProductTypes();
+  } catch (error) {
+    alertPopup('Failed to fetch categories', 'error');
+  }
+});
+
 // Clean up long press timer
 onUnmounted(() => {
   if (longPressTimer.value) {
@@ -164,7 +172,7 @@ onUnmounted(() => {
   </div>
 
   <div v-if="products.length === 0" class="text-gray-500 text-center p-4">
-      No products found. Add a new product to get started.
+    No products found. Add a new product to get started.
   </div>
   
   <ul v-if="products.length > 0" class="space-y-2">
@@ -193,6 +201,7 @@ onUnmounted(() => {
     :positiveAction="saveProduct"
     :negativeAction="archiveProduct"
     :product="editingProduct"
+    :categories="categories"
   />
 
   <ProductModal
@@ -202,5 +211,6 @@ onUnmounted(() => {
     :positiveAction="addNewProduct"
     :negativeAction="form.reset"
     :product="form"
+    :categories="categories"
   />
 </template>

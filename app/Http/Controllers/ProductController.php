@@ -32,13 +32,14 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'product_name' => 'required',
-            'brand' => 'nullable',
+            'product_type_id' => 'required|exists:product_types,id',
+            'brand' => 'required',
             'description' => 'nullable',
-            'price' => 'required|decimal:2,4',
-            'discounted_price_1' => 'nullable|decimal:2,4',
-            'discounted_price_2' => 'nullable|decimal:2,4',
-            'discounted_price_3' => 'nullable|decimal:2,4',
-            'purchase_wholesale_price' => 'nullable|decimal:2,4',
+            'price' => 'required|numeric',
+            'discounted_price_1' => 'nullable|numeric',
+            'discounted_price_2' => 'nullable|numeric',
+            'discounted_price_3' => 'nullable|numeric',
+            'purchase_wholesale_price' => 'nullable|numeric',
             'stocks' => 'required|integer|numeric|min:0',
             'closest_expiration_date' => 'nullable|date',
         ]);

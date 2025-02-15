@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import Modal from '@/Components/ui/Modal.vue';
 
 const props = defineProps({
@@ -9,15 +9,15 @@ const props = defineProps({
   positiveAction: Function,
   negativeAction: Function,
   product: Object,
+  categories: Array,
 })
 
-const formattedPrice = computed({
-  get: () => props.product.price.toFixed(2),
-  set: (value) => {
-    const parsed = parseFloat(value)
-    props.product.price = isNaN(parsed) ? 0 : parsed
-  },
-})
+const validatePrice = (e) => {
+  let value = parseFloat(e.target.value);
+  if (isNaN(value) || value < 0.25) {
+    props.product.price = 0.25;
+  }
+}
 </script>
 
 <template>
@@ -29,55 +29,125 @@ const formattedPrice = computed({
     <div class="mt-2">
       <div class="space-y-4">
         <div>
-          <label for="productName" class="block text-sm font-medium text-gray-700">Name</label>
+          <label for="product_name" class="block text-sm font-medium text-gray-700">Name</label>
           <input
-            id="productName"
-            v-model="product.name"
+            id="product_name"
+            v-model="product.product_name"
             type="text"
             class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
+          <span v-if="product.errors.product_name" class="text-red-500 text-sm italic">
+            {{ product.errors.product_name }}
+          </span>
         </div>
         <div>
-          <label for="productDescription" class="block text-sm font-medium text-gray-700">Description</label>
+          <label for="product_type_id" class="block text-sm font-medium text-gray-700">Type or Category</label>
+          <select
+            id="product_type_id"
+            v-model="product.product_type_id"
+            class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          >
+            <option
+              v-for="category in categories"
+              :key="category.id"
+              :value="category.id"
+            >
+              {{ category.type_name }}
+            </option>
+          </select>
+          <span v-if="product.errors.type_name" class="text-red-500 text-sm italic">
+            {{ product.errors.type_name }}
+          </span>
+        </div>
+        <div>
+          <label for="brand" class="block text-sm font-medium text-gray-700">Brand</label>
+          <input
+            id="brand"
+            v-model="product.brand"
+            type="text"
+            class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          />
+          <span v-if="product.errors.brand" class="text-red-500 text-sm italic">
+            {{ product.errors.brand }}
+          </span>
+        </div>
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
           <textarea
-            id="productDescription"
+            id="description"
             v-model="product.description"
             rows="3"
             class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           ></textarea>
+          <span v-if="product.errors.description" class="text-red-500 text-sm italic">
+            {{ product.errors.description }}
+          </span>
         </div>
-        <div>
-          <label for="productPrice" class="block text-sm font-medium text-gray-700">Price</label>
-          <div class="mt-1 flex items-center">
-            <span class="bg-gray-200 text-gray-600 p-2 rounded-l-md border-t border-b border border-gray-300">
-              ₱
+        <div class="grid grid-cols-4 gap-4">
+          <div class="col-span-4 sm:col-span-2">
+            <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+            <div class="mt-1 flex items-center">
+              <span class="bg-gray-200 text-gray-600 p-2 rounded-l-md border-t border-b border border-gray-300">
+                ₱
+              </span>
+              <input
+                id="price"
+                v-model="product.price"
+                type="number"
+                step="1"
+                class="block p-2 w-full rounded-r-md border-l-0 border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                @input="validatePrice"
+                @blur="product.price = Math.max(0.25, parseFloat(product.price) || 0).toFixed(2)"
+              />
+            </div>
+            <span v-if="product.errors.price" class="text-red-500 text-sm italic">
+              {{ product.errors.price }}
             </span>
-            <input
-              id="productPrice"
-              v-model="formattedPrice"
-              type="number"
-              step="1"
-              class="block p-2 w-full rounded-r-md border-l-0 border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
+          </div>
+          <div class="col-span-4 sm:col-span-2">
+            <label for="discounted_price_1" class="block text-sm font-medium text-gray-700">Discounted</label>
+            <div class="mt-1 flex items-center">
+              <span class="bg-gray-200 text-gray-600 p-2 rounded-l-md border-t border-b border border-gray-300">
+                ₱
+              </span>
+              <input
+                id="discounted_price_1"
+                v-model="product.discounted_price_1"
+                type="number"
+                min="0"
+                step="1"
+                class="block p-2 w-full rounded-r-md border-l-0 border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                @blur="product.price = parseFloat(product.price).toFixed(2)"
+              />
+            </div>
+            <span v-if="product.errors.discounted_price_1" class="text-red-500 text-sm italic">
+              {{ product.errors.discounted_price_1 }}
+            </span>
           </div>
         </div>
         <div>
-          <label for="productStock" class="block text-sm font-medium text-gray-700">Available Stock</label>
+          <label for="stocks" class="block text-sm font-medium text-gray-700">Available Stock</label>
           <input
-            id="productStock"
-            v-model="product.stock"
+            id="stocks"
+            v-model="product.stocks"
             type="number"
             class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
+          <span v-if="product.errors.stocks" class="text-red-500 text-sm italic">
+            {{ product.errors.stocks }}
+          </span>
         </div>
         <div>
-          <label for="productExpiration" class="block text-sm font-medium text-gray-700">Expiration Date (if applicable)</label>
+          <label for="closest_expiration_date" class="block text-sm font-medium text-gray-700">Expiration Date (if applicable)</label>
           <input
-            id="productExpiration"
-            v-model="product.expiration"
+            id="closest_expiration_date"
+            v-model="product.closest_expiration_date"
             type="date"
             class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
+          <span v-if="product.errors.closest_expiration_date" class="text-red-500 text-sm italic">
+            {{ product.errors.closest_expiration_date }}
+          </span>
         </div>
       </div>
     </div>

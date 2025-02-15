@@ -38,7 +38,7 @@ onMounted(async () => {
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
       <Alert />
       <div class="md:col-span-2 bg-white rounded-lg shadow p-4">
-        <ProductList :fetchProducts="fetchProducts" />
+        <ProductList :fetch-products="fetchProducts" />
       </div>
       
       <div class="bg-white rounded-lg shadow p-4">

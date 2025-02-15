@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\ProductType;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -18,6 +19,10 @@ class DatabaseSeeder extends Seeder
             'username' => 'admin',
             'password' => bcrypt('password'),
             'isAdmin' => true,
+        ]);
+
+        ProductType::create([
+            'type_name' => 'Others',
         ]);
     }
 }
