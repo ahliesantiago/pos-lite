@@ -14,7 +14,7 @@ const navItems = [
     name: 'Inventory', 
     icon: ClipboardDocumentListIcon, 
     colors: 'bg-green-500 hover:bg-green-600 focus:ring-green-500',
-    route: 'products.index',
+    route: 'inventory',
   },
   { 
     name: 'Pending Orders', 

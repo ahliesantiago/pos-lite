@@ -1,49 +1,33 @@
 <script setup>
 import { inject, ref, computed, onUnmounted } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import { ArrowUpTrayIcon, PlusIcon } from '@heroicons/vue/24/solid';
 import ProductModal from '@/Components/common/ProductModal.vue';
 
+defineProps({
+  fetchProducts: Function
+});
+
+const { alertPopup } = inject('alert');
+const errors = ref({});
 const products = inject('products');
-const cart = inject('cart');
+const form = useForm({
+  product_name: '',
+  brand: '',
+  description: '',
+  price: null,
+  discounted_price_1: null,
+  stocks: null,
+  closest_expiration_date: ''
+});
+const longPressTimer = ref(null);
+const longPressDuration = 500; // ms
 const searchQuery = ref('');
 const isEditModalOpen = ref(false);
 const isAddModalOpen = ref(false);
 const editingProduct = ref(null);
-const newProduct = ref({
-  name: '',
-  description: '',
-  price: 0,
-  stock: 0,
-  expiration: ''
-});
-const longPressTimer = ref(null);
-const longPressDuration = 500; // ms
-
-const { alertPopup } = inject('alert');
-
-const filteredProducts = computed(() => {
-  if (!searchQuery.value) return products.value;
-  const query = searchQuery.value.toLowerCase();
-  return products.value.filter(product => product.name.toLowerCase().includes(query));
-});
-
-const addToCart = (product) => {
-  const existingItem = cart.value.find(item => item.id === product.id);
-  const sufficientStock = product.stock > 0;
-  if (existingItem && sufficientStock) {
-    existingItem.quantity++;
-    product.stock--;
-    alertPopup(`Added ${product.name} to cart`, 'success');
-  } else if (!existingItem && sufficientStock) {
-    product.stock--;
-    cart.value.push({ ...product, quantity: 1 });
-    alertPopup(`Added ${product.name} to cart`, 'success');
-  } else {
-    alertPopup('Insufficient stock!', 'error', 5000);
-  }
-};
+const cart = inject('cart');
 
 const openAddModal = () => {
   isAddModalOpen.value = true;
@@ -51,35 +35,23 @@ const openAddModal = () => {
 
 const closeAddModal = () => {
   isAddModalOpen.value = false;
-  newProduct.value = {
-    name: '',
-    description: '',
-    price: 0,
-    stock: 0,
-    expiration: ''
-  };
 };
 
 const addNewProduct = () => {
-  const id = Math.max(...products.value.map(p => p.id)) + 1;
-  products.value.push({
-    id,
-    ...newProduct.value,
-    price: parseFloat(newProduct.value.price),
-    stock: parseInt(newProduct.value.stock)
-  });
-  alertPopup('Product added successfully', 'success');
-  closeAddModal();
-};
-
-const resetFields = () => {
-  newProduct.value = {
-    name: '',
-    description: '',
-    price: 0,
-    stock: 0,
-    expiration: ''
-  };
+  errors.value = {}; // Reset previous errors, if any
+    form.post('/products', {
+      preserveScroll: true,
+      onSuccess: () => {
+        alertPopup('Product added successfully', 'success');
+        closeAddModal();
+        form.reset();
+        fetchProducts();
+      },
+      onError: (error) => {
+        alertPopup('Failed to add product, please try again later.');
+        console.error('Failed to add product', error);
+      }
+    });
 };
 
 const selectProduct = (product) => {
@@ -129,6 +101,28 @@ const archiveProduct = () => {
   closeEditModal();
 };
 
+const filteredProducts = computed(() => {
+  if (!searchQuery.value) return products.value;
+  const query = searchQuery.value.toLowerCase();
+  return products.value.filter(product => product.name.toLowerCase().includes(query));
+});
+
+const addToCart = (product) => {
+  const existingItem = cart.value.find(item => item.id === product.id);
+  const sufficientStock = product.stock > 0;
+  if (existingItem && sufficientStock) {
+    existingItem.quantity++;
+    product.stock--;
+    alertPopup(`Added ${product.name} to cart`, 'success');
+  } else if (!existingItem && sufficientStock) {
+    product.stock--;
+    cart.value.push({ ...product, quantity: 1 });
+    alertPopup(`Added ${product.name} to cart`, 'success');
+  } else {
+    alertPopup('Insufficient stock!', 'error', 5000);
+  }
+};
+
 // Clean up long press timer
 onUnmounted(() => {
   if (longPressTimer.value) {
@@ -168,8 +162,12 @@ onUnmounted(() => {
       <ArrowUpTrayIcon class="h-5 w-5 inline-block" /> <span class="hidden xl:inline-block">Bulk</span>
     </Link>
   </div>
+
+  <div v-if="products.length === 0" class="text-gray-500 text-center p-4">
+      No products found. Add a new product to get started.
+  </div>
   
-  <ul class="space-y-2">
+  <ul v-if="products.length > 0" class="space-y-2">
     <li
       v-for="product in filteredProducts"
       :key="product.id"
@@ -202,7 +200,7 @@ onUnmounted(() => {
     :closeModal="closeAddModal"
     :action="'adding'"
     :positiveAction="addNewProduct"
-    :negativeAction="resetFields"
-    :product="newProduct"
+    :negativeAction="form.reset"
+    :product="form"
   />
 </template>

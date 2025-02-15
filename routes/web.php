@@ -11,7 +11,7 @@ Route::middleware(['auth', CheckDefaultPassword::class])->group(function () {
         return Inertia::render('Main/Dashboard');
     })->name('dashboard');
 
-    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/inventory', [ProductController::class, 'index'])->name('inventory');
     Route::get('/products/featured', [ProductController::class, 'featured'])->name('products.featured'); 
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
     Route::get('/products/bulk-add', [ProductController::class, 'bulkCreate'])->name('products.bulk-add');

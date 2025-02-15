@@ -1,12 +1,11 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import { PlusIcon  } from '@heroicons/vue/24/solid';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 </script>
 
 <template>
-  <AuthenticatedLayout>
+  <div>
     <div>
       Will contain the complete list of products and options to add, edit, and archive products
       (with options to do all the operations individually or multiple at a time).
@@ -18,5 +17,5 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
     >
       <PlusIcon class="h-5 w-5 inline-block" /> <span class="hidden xl:inline-block">Add Products</span>
     </Link>
-  </AuthenticatedLayout>
+  </div>
 </template>

@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers;
 use Inertia\Inertia;
+use App\Models\Product;
 
 class ProductController extends Controller
 {
-    // Fetch and show all products
     public function index()
     {
-        return Inertia::render('Inventory/AllProducts');
+        return Inertia::render('Store/Inventory');
+    }
+
+    public function featured()
+    {
+        $products = Product::take(10)->get()->toArray();
+        return response()->json($products);
     }
 
     public function show()
@@ -21,13 +27,27 @@ class ProductController extends Controller
         
     }
 
-    public function store()
+    public function store($request)
     {
-        
+        $validated = $request->validate([
+            'product_name' => 'required',
+            'brand' => 'nullable',
+            'description' => 'nullable',
+            'price' => 'required|decimal:2,4',
+            'discounted_price_1' => 'nullable|decimal:2,4',
+            'discounted_price_2' => 'nullable|decimal:2,4',
+            'discounted_price_3' => 'nullable|decimal:2,4',
+            'purchase_wholesale_price' => 'nullable|decimal:2,4',
+            'stocks' => 'required|integer|numeric|min:0',
+            'closest_expiration_date' => 'nullable|date',
+        ]);
+
+        Product::create($validated);
+        return redirect()->route('dashboard')->with('success', 'Product added successfully');
     }
 
     public function bulkCreate()
     {
-        return Inertia::render('Inventory/BulkAddProducts');
+        return Inertia::render('Store/BulkAddProducts');
     }
 }
