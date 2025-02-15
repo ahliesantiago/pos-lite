@@ -6,6 +6,7 @@ import { PlusIcon  } from '@heroicons/vue/24/solid';
 import { ArchiveBoxIcon, EyeIcon, PencilSquareIcon } from '@heroicons/vue/24/outline';
 import Alert from '@/Components/common/Alert.vue';
 import { useAlert } from '@/Composables/useAlert';
+import { fetchProductTypes } from '@/Composables/useProductOperations';
 import TypeModal from '@/Components/common/TypeModal.vue';
 
 const alert = useAlert();
@@ -13,16 +14,6 @@ provide('alert', alert);
 const alertPopup = alert.alertPopup;
 const categories = ref([]);
 const errors = ref({});
-
-const fetchProductTypes = async () => {
-  try {
-    const { data } = await axios.get('/inventory/types/list');
-    categories.value = data;
-  } catch (error) {
-    console.error('Failed to fetch categories', error);
-    alertPopup('Failed to fetch categories');
-  }
-};
 
 const form = useForm({
   type_name: '',
@@ -50,14 +41,18 @@ const addNewCategory = () => {
       fetchProductTypes();
     },
     onError: (error) => {
-      alertPopup('Failed to add category, please try again later.');
+      alertPopup('Failed to add category, please try again later.', 'error');
       console.error('Failed to add category', error);
     }
   });
 };
 
 onMounted(async () => {
-  fetchProductTypes();
+  try {
+    categories.value = await fetchProductTypes();
+  } catch (error) {
+    alertPopup('Failed to fetch categories', 'error');
+  }
 });
 </script>
 
