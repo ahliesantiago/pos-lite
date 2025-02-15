@@ -1,11 +1,13 @@
 <script setup>
-import { computed, defineEmits, inject } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { MinusIcon, PlusIcon, TrashIcon } from '@heroicons/vue/24/solid';
+import Checkout from './Checkout.vue';
 
 const emit = defineEmits();
 const cart = inject('cart');
 const products = inject('products');
 const { alertPopup } = inject('alert');
+const isCheckoutModalOpen = ref(false);
 
 const removeFromCart = (itemId) => {
   const item = cart.value.find(item => item.id === itemId);
@@ -46,16 +48,24 @@ const cartTotal = computed(() => {
   return cart.value.reduce((total, item) => total + item.price * item.quantity, 0);
 });
 
-const checkout = () => {
-  if (cart.value.length === 0) {
-    alertPopup('Cart is empty!', 'error');
-    return;
-  }
-  // TO ADD: Checkout logic
-  console.log('Checkout:', cart.value);
-  cart.value = [];
-  alertPopup('Checkout successful!', 'success');
+const openCheckout = () => {
+  isCheckoutModalOpen.value = true;
 };
+
+const closeCheckout = () => {
+  isCheckoutModalOpen.value = false;
+};
+
+// const checkout = () => {
+//   if (cart.value.length === 0) {
+//     alertPopup('Cart is empty!', 'error');
+//     return;
+//   }
+//   isCheckoutModalOpen.value = true;
+
+//   cart.value = [];
+//   // alertPopup('Checkout successful!', 'success');
+// };
 </script>
 
 <template>
@@ -106,9 +116,14 @@ const checkout = () => {
     Total: ₱{{ cartTotal.toFixed(2) }}
   </div>
   <button
-    @click="checkout"
+    @click="openCheckout"
     class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
   >
     Checkout
   </button>
+
+  <Checkout
+    :isModalOpen="isCheckoutModalOpen"
+    :closeModal="closeCheckout"
+  />
 </template>
