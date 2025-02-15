@@ -24,12 +24,15 @@ return new class extends Migration
             $table->decimal('purchase_wholesale_price', 10, 2)->nullable();
             $table->integer('stocks')->default(0);
             $table->dateTime('closest_expiration_date')->nullable();
+            $table->boolean('isArchived')->default(false);
             $table->timestamps();
         });
 
         Schema::create('product_types', function (Blueprint $table) {
             $table->id();
             $table->string('type_name');
+            $table->string('description')->nullable();
+            $table->boolean('isArchived')->default(false);
             $table->timestamps();
         });
     }

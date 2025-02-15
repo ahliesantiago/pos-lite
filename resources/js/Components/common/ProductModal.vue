@@ -55,8 +55,8 @@ const validatePrice = (e) => {
               {{ category.type_name }}
             </option>
           </select>
-          <span v-if="product.errors.type_name" class="text-red-500 text-sm italic">
-            {{ product.errors.type_name }}
+          <span v-if="product.errors.product_type_id" class="text-red-500 text-sm italic">
+            {{ product.errors.product_type_id }}
           </span>
         </div>
         <div>

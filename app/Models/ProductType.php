@@ -10,5 +10,8 @@ class ProductType extends Model
 
     protected $fillable = [
         'type_name',
+        'description',
+        'parent_type_id',
+        'isArchived',
     ];
 }
