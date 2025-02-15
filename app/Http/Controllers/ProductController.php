@@ -12,7 +12,7 @@ class ProductController extends Controller
         return Inertia::render('Store/Inventory');
     }
 
-    public function featured()
+    public function list()
     {
         $products = Product::take(10)->get()->toArray();
         return response()->json($products);

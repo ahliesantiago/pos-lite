@@ -19,7 +19,7 @@ provide('products', products);
 
 const fetchProducts = async () => {
   try {
-    const { data } = await axios.get('/products/featured');
+    const { data } = await axios.get('/inventory/products/list');
     products.value = data;
   } catch (error) {
     console.error('Failed to fetch products', error);
