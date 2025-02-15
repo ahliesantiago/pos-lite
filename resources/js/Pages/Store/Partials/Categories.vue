@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, provide, ref } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
-import axios from 'axios';
 import { PlusIcon  } from '@heroicons/vue/24/solid';
 import { ArchiveBoxIcon, EyeIcon, PencilSquareIcon } from '@heroicons/vue/24/outline';
 import Alert from '@/Components/common/Alert.vue';
@@ -17,7 +16,8 @@ const errors = ref({});
 
 const form = useForm({
   type_name: '',
-  // parent_type_id: null
+  parent_type_id: null,
+  description: '',
 });
 
 const isAddModalOpen = ref(false);
@@ -45,6 +45,10 @@ const addNewCategory = () => {
       console.error('Failed to add category', error);
     }
   });
+};
+
+const handleView = (category) => {
+  console.log('Viewing category:', category);
 };
 
 onMounted(async () => {
@@ -80,6 +84,8 @@ onMounted(async () => {
   <div v-if="categories.length === 0" class="text-gray-500 text-center p-4">
     No categories found. Add a new category to get started.
   </div>
+
+  <!-- TO DO: Make list into a sortable and filterable table -->
   
   <ul v-if="categories.length > 0" class="space-y-2 border-b border-gray-300">
     <div
@@ -89,7 +95,9 @@ onMounted(async () => {
     >
       <p class="col-span-4">{{ category.type_name }}</p>
       <div class="col-span-1 flex justify-center items-center">
-        <EyeIcon class="h-5 w-5" />
+        <button @click="handleView(category)" class="p-2 rounded hover:bg-gray-100 focus:outline-none">
+          <EyeIcon class="h-5 w-5" />
+        </button>
       </div>
       <div class="col-span-1 flex justify-center items-center">
         <ArchiveBoxIcon class="h-5 w-5" />
@@ -107,5 +115,6 @@ onMounted(async () => {
     :positiveAction="addNewCategory"
     :negativeAction="form.reset"
     :type="form"
+    :categories="categories"
   />
 </template>

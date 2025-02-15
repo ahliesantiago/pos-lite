@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('product_name');
+            $table->string('product_name')->unique();
             $table->foreignId('product_type_id')->constrained();
             $table->string('brand');
             $table->string('description')->nullable();
@@ -30,7 +30,8 @@ return new class extends Migration
 
         Schema::create('product_types', function (Blueprint $table) {
             $table->id();
-            $table->string('type_name');
+            $table->string('type_name')->unique();
+            $table->foreignId('parent_type_id')->nullable()->constrained('product_types')->nullOnDelete();
             $table->string('description')->nullable();
             $table->boolean('isArchived')->default(false);
             $table->timestamps();

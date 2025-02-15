@@ -27,7 +27,17 @@ class ProductTypeController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'type_name' => 'required',
+            'type_name' => 'required|unique:product_types,type_name',
+            'parent_type_id' => [
+                'nullable',
+                'exists:product_types,id',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($value == $request->id) {
+                        $fail('Product type cannot reference itself as a parent type');
+                    }
+                }
+            ],
+            'description' => 'nullable',
         ]);
 
         ProductType::create($validated);

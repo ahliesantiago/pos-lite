@@ -8,6 +8,7 @@ const props = defineProps({
   positiveAction: Function,
   negativeAction: Function,
   type: Object,
+  categories: Array,
 })
 </script>
 
@@ -27,17 +28,41 @@ const props = defineProps({
             type="text"
             class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
+          <span v-if="type.errors.type_name" class="text-red-500 text-sm italic">
+            {{ type.errors.type_name }}
+          </span>
         </div>
-        <!-- <div>
+        <div>
           <label for="parent_type_id" class="block text-sm font-medium text-gray-700">Parent Category</label>
           <select
             id="parent_type_id"
             v-model="type.parent_type_id"
             class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
-            <option value="prodIDhere">prodNameHere</option>
+            <option
+              v-for="category in categories"
+              :key="category.id"
+              :value="category.id"
+            >
+              {{ category.type_name }}
+            </option>
           </select>
-        </div> -->
+          <span v-if="type.errors.parent_type_id" class="text-red-500 text-sm italic">
+            {{ type.errors.parent_type_id }}
+          </span>
+        </div>
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+          <textarea
+            id="description"
+            v-model="type.description"
+            rows="3"
+            class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          ></textarea>
+          <span v-if="type.errors.description" class="text-red-500 text-sm italic">
+            {{ type.errors.description }}
+          </span>
+        </div>
       </div>
     </div>
 
