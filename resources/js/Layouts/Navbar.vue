@@ -14,7 +14,7 @@ const navItems = [
     name: 'Inventory', 
     icon: ClipboardDocumentListIcon, 
     colors: 'bg-green-500 hover:bg-green-600 focus:ring-green-500',
-    route: 'inventory',
+    route: 'products',
   },
   { 
     name: 'Pending Orders', 
@@ -22,25 +22,25 @@ const navItems = [
     colors: 'bg-blue-500 hover:bg-blue-600 focus:ring-blue-500',
     route: 'orders',
   },
-  { 
-    name: 'Records', 
-    icon: DocumentChartBarIcon, 
-    colors: 'bg-purple-500 hover:bg-purple-600 focus:ring-purple-500',
-    route: 'records',
-  },
-  { 
-    name: 'Settings', 
-    icon: Cog6ToothIcon, 
-    colors: 'bg-amber-900 hover:bg-amber-900 focus:ring-amber-900',
-    route: 'records',
-    weight: 0.3
-  },
+  // { 
+  //   name: 'Records', 
+  //   icon: DocumentChartBarIcon, 
+  //   colors: 'bg-purple-500 hover:bg-purple-600 focus:ring-purple-500',
+  //   route: 'records',
+  // },
+  // { 
+  //   name: 'Settings', 
+  //   icon: Cog6ToothIcon, 
+  //   colors: 'bg-amber-900 hover:bg-amber-900 focus:ring-amber-900',
+  //   route: 'records',
+  //   weight: 0.3
+  // },
   {
     name: 'Logout',
     icon: ArrowLeftStartOnRectangleIcon,
     colors: 'bg-red-500 hover:bg-red-600 focus:ring-red-500',
     route: 'logout',
-    weight: 0.2,
+    weight: 0.3,
     method: 'post'
   }
 ];

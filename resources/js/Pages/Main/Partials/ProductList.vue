@@ -1,7 +1,8 @@
 <script setup>
 import { inject, ref, computed, onUnmounted } from 'vue';
+import { Link } from '@inertiajs/vue3';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
-import { PlusIcon } from '@heroicons/vue/24/solid';
+import { ArrowUpTrayIcon, PlusIcon } from '@heroicons/vue/24/solid';
 import ProductModal from '@/Components/common/ProductModal.vue';
 
 const products = inject('products');
@@ -137,7 +138,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="mb-4 grid grid-cols-6 gap-x-2">
+  <div class="mb-4 grid grid-cols-7 gap-x-2">
     <div class="col-span-5">
       <label for="search" class="sr-only">Search products</label>
       <div class="relative">
@@ -157,8 +158,15 @@ onUnmounted(() => {
       @click="openAddModal"
       class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
     >
-      <PlusIcon class="h-5 w-5 inline-block" /> Add
+      <PlusIcon class="h-5 w-5 inline-block" /> <span class="hidden xl:inline-block">Add</span>
     </button>
+    <Link
+      :href="route('products.bulk-add')"
+      as="button"
+      class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+    >
+      <ArrowUpTrayIcon class="h-5 w-5 inline-block" /> <span class="hidden xl:inline-block">Bulk</span>
+    </Link>
   </div>
   
   <ul class="space-y-2">
