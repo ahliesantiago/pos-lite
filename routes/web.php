@@ -5,6 +5,7 @@ use Inertia\Inertia;
 use App\Http\Middleware\CheckDefaultPassword;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductTypeController;
 
 Route::middleware(['auth', CheckDefaultPassword::class])->group(function () {
     Route::get('/', function () {
@@ -15,6 +16,10 @@ Route::middleware(['auth', CheckDefaultPassword::class])->group(function () {
     Route::get('/products/featured', [ProductController::class, 'featured'])->name('products.featured'); 
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
     Route::get('/products/bulk-add', [ProductController::class, 'bulkCreate'])->name('products.bulk-add');
+    
+    Route::get('/inventory/types/list', [ProductTypeController::class, 'list'])->name('types.list'); 
+    Route::post('/inventory/types', [ProductTypeController::class, 'store'])->name('types.store');
+    Route::get('/inventory/types/bulk-add', [ProductTypeController::class, 'bulkCreate'])->name('types.bulk-add');
     
     Route::get('/orders', [CartController::class, 'index'])->name('orders');
     

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Product;
 
@@ -27,7 +28,7 @@ class ProductController extends Controller
         
     }
 
-    public function store($request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'product_name' => 'required',
