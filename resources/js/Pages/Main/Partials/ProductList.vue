@@ -104,20 +104,20 @@ const archiveProduct = () => {
 const filteredProducts = computed(() => {
   if (!searchQuery.value) return products.value;
   const query = searchQuery.value.toLowerCase();
-  return products.value.filter(product => product.name.toLowerCase().includes(query));
+  return products.value.filter(product => product.product_name.toLowerCase().includes(query));
 });
 
 const addToCart = (product) => {
   const existingItem = cart.value.find(item => item.id === product.id);
-  const sufficientStock = product.stock > 0;
+  const sufficientStock = product.stocks > 0;
   if (existingItem && sufficientStock) {
     existingItem.quantity++;
-    product.stock--;
-    alertPopup(`Added ${product.name} to cart`, 'success');
+    product.stocks--;
+    alertPopup(`Added ${product.product_name} to cart`, 'success');
   } else if (!existingItem && sufficientStock) {
-    product.stock--;
+    product.stocks--;
     cart.value.push({ ...product, quantity: 1 });
-    alertPopup(`Added ${product.name} to cart`, 'success');
+    alertPopup(`Added ${product.product_name} to cart`, 'success');
   } else {
     alertPopup('Insufficient stock!', 'error', 5000);
   }
@@ -188,7 +188,7 @@ onUnmounted(() => {
       @touchend="endLongPress"
     >
       <span>
-        {{ product.name }} <span class="text-gray-500 text-sm">(Available: {{ product.stock }})</span>
+        {{ product.product_name }} <span class="text-gray-500 text-sm">(Available: {{ product.stocks }})</span>
       </span>
       <span class="text-gray-600">₱{{ product.price.toFixed(2) }}</span>
     </li>
