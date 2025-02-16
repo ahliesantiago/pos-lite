@@ -17,7 +17,7 @@ const navItems = [
     route: 'inventory',
   },
   { 
-    name: 'Pending Orders', 
+    name: 'Order History', 
     icon: CreditCardIcon, 
     colors: 'bg-blue-500 hover:bg-blue-600 focus:ring-blue-500',
     route: 'orders',

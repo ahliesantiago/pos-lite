@@ -1,7 +1,7 @@
 <script setup>
 import { computed, inject, ref } from 'vue';
 import { MinusIcon, PlusIcon, TrashIcon } from '@heroicons/vue/24/solid';
-import Checkout from './Checkout.vue';
+import CheckoutModal from './CheckoutModal.vue';
 
 const emit = defineEmits();
 const cart = inject('cart');
@@ -119,7 +119,7 @@ const closeCheckout = () => {
     Checkout
   </button>
 
-  <Checkout
+  <CheckoutModal
     :isModalOpen="isCheckoutModalOpen"
     :closeModal="closeCheckout"
     :cartTotal="cartTotal"
