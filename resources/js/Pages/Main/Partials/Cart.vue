@@ -23,23 +23,23 @@ const removeFromCart = (itemId) => {
 
 const updateQuantity = (payload) => {
   const { id, quantity } = payload;
-  const existingItem = cart.value.find((item) => item.id === id);
+  const cartItem = cart.value.find((item) => item.id === id);
   const product = products.value.find((p) => p.id === id);
   
-  if (existingItem && product) {
-    const quantityDiff = quantity - existingItem.quantity;
-    // Check if product stock is sufficient
-    if (product.stock >= quantityDiff && quantity >= 1) {
+  if (cartItem && product) {
+    const quantityDiff = quantity - cartItem.quantity;
+    // Check if product stocks is sufficient
+    if (product.stocks >= quantityDiff && quantity >= 1) {
       const newQuantity = Math.max(quantity, 1);
-      const oldQuantity = existingItem.quantity;
-      existingItem.quantity = Math.min(newQuantity, oldQuantity + product.stock);
-      // Update product stock
-      product.stock -= (existingItem.quantity - oldQuantity);
+      const oldQuantity = cartItem.quantity;
+      cartItem.quantity = Math.min(newQuantity, oldQuantity + product.stocks);
+      // Update product stocks
+      product.stocks -= (cartItem.quantity - oldQuantity);
       alertPopup('Quantity updated successfully', 'success');
     } else if (quantity <= 0) {
       alertPopup('Unable to decrease further', 'error');
     } else {
-      alertPopup('Insufficient stock!', 'error');
+      alertPopup('Insufficient stocks!', 'error');
     }
   }
 };
@@ -49,23 +49,19 @@ const cartTotal = computed(() => {
 });
 
 const openCheckout = () => {
+  if (cart.value.length === 0) {
+    alertPopup('Cart is empty!', 'error');
+    return;
+  }
   isCheckoutModalOpen.value = true;
 };
 
 const closeCheckout = () => {
   isCheckoutModalOpen.value = false;
+  // // If success:
+  // alertPopup('Checkout successful!', 'success');
+  // cart.value = [];
 };
-
-// const checkout = () => {
-//   if (cart.value.length === 0) {
-//     alertPopup('Cart is empty!', 'error');
-//     return;
-//   }
-//   isCheckoutModalOpen.value = true;
-
-//   cart.value = [];
-//   // alertPopup('Checkout successful!', 'success');
-// };
 </script>
 
 <template>
@@ -88,7 +84,7 @@ const closeCheckout = () => {
             @click="removeFromCart(item.id)"
           />
         </td>
-        <td class="px-4 py-2">{{ item.name }}</td>
+        <td class="px-4 py-2">{{ item.product_name }}</td>
         <td class="px-4 py-2">
           <div class="flex">
             <button
@@ -117,7 +113,8 @@ const closeCheckout = () => {
   </div>
   <button
     @click="openCheckout"
-    class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:text-gray-700 disabled:cursor-not-allowed"
+    :disabled="cart?.length === 0"
   >
     Checkout
   </button>
@@ -125,5 +122,6 @@ const closeCheckout = () => {
   <Checkout
     :isModalOpen="isCheckoutModalOpen"
     :closeModal="closeCheckout"
+    :cartTotal="cartTotal"
   />
 </template>
