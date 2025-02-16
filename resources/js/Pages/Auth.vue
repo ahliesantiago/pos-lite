@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { Head, useForm } from "@inertiajs/vue3";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/vue/24/outline";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
@@ -16,8 +16,6 @@ const form = useForm({
   password: "",
   remember: false,
 });
-
-const model = defineModel<string>({ required: true });
 
 const input = ref<HTMLInputElement | null>(null);
 
