@@ -13,4 +13,14 @@ class CartItem extends Model
         'price_at_checkout',
         'total_price',
     ];
+
+    public function cart()
+    {
+        return $this->belongsTo(Cart::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

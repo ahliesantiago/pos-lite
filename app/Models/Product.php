@@ -20,4 +20,9 @@ class Product extends Model
         'closest_expiration_date',
         'isArchived',
     ];
+
+    public function cartItems()
+    {
+        return $this->hasMany(CartItem::class);
+    }
 }

@@ -15,4 +15,9 @@ class Cart extends Model
         'due_date',
         'remarks',
     ];
+
+    public function cart_items()
+    {
+        return $this->hasMany(CartItem::class);
+    }
 }
