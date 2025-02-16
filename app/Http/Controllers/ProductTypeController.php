@@ -8,9 +8,10 @@ use App\Models\ProductType;
 
 class ProductTypeController extends Controller
 {
-    public function list()
+    public function list(Request $request)
     {
-        $categories = ProductType::take(10)->get()->toArray();
+        $typeCount = $request->input('typeCount', 10);
+        $categories = ProductType::paginate($typeCount);
         return response()->json($categories);
     }
 

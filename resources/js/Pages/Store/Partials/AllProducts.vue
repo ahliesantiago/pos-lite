@@ -15,8 +15,10 @@ const errors = ref({});
 
 const fetchProducts = async () => {
   try {
-    const { data } = await axios.get('/inventory/products/list');
-    products.value = data;
+    const { data } = await axios.get('/inventory/products/list', {
+      params: { itemCount: 20, page: 1 }
+    });
+    products.value = data.data;
   } catch (error) {
     console.error('Failed to fetch products', error);
     alertPopup('Failed to fetch products', 'error');

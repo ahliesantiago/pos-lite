@@ -40,7 +40,7 @@ const closeAddModal = () => {
 };
 
 const addNewProduct = () => {
-  form.post('/products', {
+  form.post('/inventory/products', {
     preserveScroll: true,
     onSuccess: () => {
       alertPopup('Product added successfully', 'success');

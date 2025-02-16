@@ -12,9 +12,17 @@ class ProductController extends Controller
         return Inertia::render('Store/Inventory');
     }
 
-    public function list()
+    public function list(Request $request)
     {
-        $products = Product::take(10)->get()->toArray();
+        $itemCount = $request->input('itemCount', 10);
+        $products = Product::paginate($itemCount);
+        return response()->json($products);
+    }
+
+    // TO DO: Implement method to sort by most popular based on instances on cart table
+    public function featured($itemCount = 10)
+    {
+        $products = Product::take($itemCount)->get()->toArray();
         return response()->json($products);
     }
 

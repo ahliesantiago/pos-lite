@@ -85,7 +85,7 @@ onMounted(async () => {
     No categories found. Add a new category to get started.
   </div>
 
-  <!-- TO DO: Make list into a sortable and filterable table -->
+  <!-- TO DO: Make list into a sortable, filterable, and paginated table -->
   
   <ul v-if="categories.length > 0" class="space-y-2 border-b border-gray-300">
     <div
