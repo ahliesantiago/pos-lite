@@ -76,8 +76,8 @@ const handleCheckout = () => {
             <thead class="text-xs uppercase bg-gray-50">
               <tr>
                 <th scope="col" class="px-4 py-2">Product Name</th>
-                <th scope="col" class="px-4 py-2 text-center">Qty</th>
-                <th scope="col" class="px-4 py-2">Amt</th>
+                <th scope="col" class="px-4 py-2 text-center">Price</th>
+                <th scope="col" class="px-4 py-2">Qty</th>
                 <th scope="col" class="px-4 py-2">Total</th>
               </tr>
             </thead>

@@ -10,6 +10,7 @@ use App\Models\Product;
 
 class CartController extends Controller
 {
+    // Fetch all carts and their corresponding cart_items and product names
     public function index()
     {
         $orders = Cart::with('cart_items.product:id,name')->latest()->get();
@@ -18,6 +19,7 @@ class CartController extends Controller
         ]);
     }
 
+    // Store a new cart and its corresponding cart_item
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -72,9 +74,15 @@ class CartController extends Controller
         return redirect()->route('orders')->with('success', 'Order logged successfully');
     }
 
-    public function show()
+    // Fetch a specific cart's items and their corresponding product names
+    // Returns a JSON response
+    public function show($order_id)
     {
-        
+        $cartItems = CartItem::where('cart_id', $order_id)
+            ->with('product:id,product_name')
+            ->get();
+
+        return response()->json($cartItems);
     }
 
     public function update()

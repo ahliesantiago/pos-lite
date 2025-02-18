@@ -25,10 +25,7 @@ Route::middleware(['auth', CheckDefaultPassword::class])->group(function () {
     
     Route::get('/orders', [CartController::class, 'index'])->name('orders');
     Route::post('/orders', [CartController::class, 'store'])->name('orders.store');
-    
-    // Route::get('/records', function () {
-    //     return Inertia::render('History/Records');
-    // })->name('records');
+    Route::get('/orders/{order_id}', [CartController::class, 'show'])->name('orders.show');
 });
 
 require __DIR__.'/auth.php';
