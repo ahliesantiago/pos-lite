@@ -14,4 +14,9 @@ class ProductType extends Model
         'parent_type_id',
         'isArchived',
     ];
+    
+    public function product()
+    {
+        return $this->hasOne(Product::class, 'product_type_id');
+    }
 }

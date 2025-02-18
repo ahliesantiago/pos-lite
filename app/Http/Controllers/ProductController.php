@@ -7,15 +7,17 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
+    // Renders the Inventory page which displays the top products and allows adding to cart (and checkout)
     public function index()
     {
         return Inertia::render('Store/Inventory');
     }
 
-    public function list(Request $request)
+    // Fetches the list of products to be displayed on the Inventory page
+    // Returns a JSON response of the products
+    public function list()
     {
-        $itemCount = $request->input('itemCount', 10);
-        $products = Product::paginate($itemCount);
+        $products = Product::with('productType')->get();
         return response()->json($products);
     }
 

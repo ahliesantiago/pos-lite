@@ -87,7 +87,7 @@ onMounted(async () => {
 
   <!-- TO DO: Make list into a sortable, filterable, and paginated table -->
   
-  <ul v-if="categories.length > 0" class="space-y-2 border-b border-gray-300">
+  <ul v-if="categories.length > 0" class="space-y-2">
     <div
       v-for="category in categories"
       :key="category.id"
