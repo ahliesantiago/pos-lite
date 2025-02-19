@@ -2,10 +2,6 @@
 import { ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { CreditCardIcon, EyeIcon, PencilIcon } from '@heroicons/vue/24/outline';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-// import ColumnGroup from 'primevue/columngroup';
-// import Row from 'primevue/row';
 import OrderModal from './Partials/OrderModal.vue';
 
 const props = defineProps({
@@ -15,6 +11,49 @@ const props = defineProps({
 const isOrderModalOpen = ref(false);
 const selectedOrder = ref(null);
 const cartItems = ref(null);
+
+const columns = [
+  {
+    title: 'Paid?',
+    dataIndex: 'is_paid',
+    key: 'is_paid',
+    sorter: {
+      compare: (a, b) => a.is_paid.localeCompare(b.is_paid),
+      multiple: 2,
+    },
+  },
+  {
+    title: 'Purchase Date',
+    dataIndex: 'created_at',
+    key: 'created_at',
+  },
+  {
+    title: 'Price',
+    dataIndex: 'total_price',
+    key: 'total_price',
+    sorter: {
+      compare: (a, b) => a.price - b.price,
+      multiple: 1,
+    },
+  },
+  {
+    title: 'Customer',
+    dataIndex: 'customer_name',
+    key: 'customer_name',
+    sorter: {
+      compare: (a, b) => a?.customer_name?.localeCompare(b?.customer_name),
+      multiple: 2,
+    },
+  },
+  {
+    title: 'Actions',
+    key: 'actions',
+  },
+]
+
+const onChange = (pagination, filters, sorter, extra) => {
+  console.log('changing')
+}
 
 const fetchCartDetails = async (cartId) => {
   try {
@@ -46,59 +85,23 @@ const closeOrderModal = () => {
         No orders found. Add a new product to get started.
       </div>
 
-      <DataTable :value="orders" sortMode="multiple" tableStyle="">
-        <Column
-          field="is_paid"
-          header="Paid?"
-          headerStyle="text-transform: uppercase; color: black;"
-          sortable
-          style="width: 20%"
-        >
-          <template #body="{ data }">
-            <span v-if="data.is_paid" class="text-green-500">Paid</span>
+      <a-table :dataSource="orders" :columns="columns" @change="onChange">
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'is_paid'">
+            <span v-if="record.is_paid" class="text-green-500">Paid</span>
             <span v-else class="text-red-500">Unpaid</span>
           </template>
-        </Column>
-        <Column
-          field="created_at"
-          header="Purchase Date"
-          headerStyle="text-transform: uppercase; color: black;"
-          sortable
-          style="width: 20%"
-        >
-          <template #body="{ data }">
-            {{ new Date(data.created_at).toLocaleDateString('en-US') }}
+          <template v-if="column.key === 'created_at'">
+            {{ new Date(record.created_at).toLocaleDateString('en-US') }}
           </template>
-        </Column>
-        <Column
-          field="total_price"
-          header="Price"
-          headerStyle="text-transform: uppercase; color: black;"
-          sortable
-          style="width: 20%"
-        >
-          <template #body="{ data }">
-            ₱{{ (data.total_price).toFixed(2) }}
+          <template v-if="column.key === 'total_price'">
+            ₱{{ record.total_price.toFixed(2) }}
           </template>
-        </Column>
-        <Column
-          field="customer_name"
-          header="Customer"
-          headerStyle="text-transform: uppercase; color: black;"
-          sortable
-          style="width: 20%"
-        >
-        </Column>
-        <Column
-          header="Actions"
-          headerStyle="text-transform: uppercase; color: black;"
-          style="width: 20%"
-        >
-          <template #body="slotProps">
+          <template v-if="column.key === 'actions'">
             <div class="flex justify-between">
               <button
                 title="View Order"
-                @click="handleViewOrder(slotProps.data)"
+                @click="handleViewOrder(record)"
               >
                 <EyeIcon class="h-6 w-6" />
               </button>
@@ -110,9 +113,10 @@ const closeOrderModal = () => {
               </button>
             </div>
           </template>
-        </Column>
-      </DataTable>
+        </template>
+      </a-table>
     </div>
+
     <OrderModal
       :isModalOpen="isOrderModalOpen"
       :closeModal="closeOrderModal"
