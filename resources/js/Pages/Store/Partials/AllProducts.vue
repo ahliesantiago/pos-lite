@@ -27,6 +27,7 @@ const fetchProducts = async () => {
   }
 };
 
+// TODO: Column filtering
 const columns = [
   {
     title: 'Name',
@@ -64,17 +65,19 @@ const columns = [
     title: 'Stocks',
     dataIndex: 'stocks',
     key: 'stocks',
-    sorter: (a, b) => a.price - b.price,
+    sorter: (a, b) => a.stocks - b.stocks,
   },
   {
     title: 'Date Added',
     dataIndex: 'created_at',
     key: 'created_at',
+    sorter: (a, b) => new Date(a.created_at) - new Date(b.created_at),
   },
   {
     title: 'Exp. Date',
     dataIndex: 'closest_expiration_date',
     key: 'closest_expiration_date',
+    sorter: (a, b) => new Date(a.closest_expiration_date) - new Date(b.closest_expiration_date),
   },
   {
     title: 'Actions',

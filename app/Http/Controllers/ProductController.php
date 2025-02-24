@@ -13,20 +13,41 @@ class ProductController extends Controller
         return Inertia::render('Store/Inventory');
     }
 
-    /*
+    /**
      * Fetches the list of products to be displayed on the Inventory page
      * Returns a JSON response of the products
      */
     public function list()
     {
-        $products = Product::with('productType')->get();
+        $products = Product::orderBy('product_name')->with('productType')->get();
         return response()->json($products);
     }
 
-    // TO DO: Implement method to sort by most popular based on instances on cart table
+    /**
+     * Shows either the most popular products (based on instances on the existing carts),
+     * and/or by the most recently added products.
+     */
     public function featured($itemCount = 10)
     {
-        $products = Product::take($itemCount)->get()->toArray();
+        $topProducts = Product::select('products.*')
+            ->leftJoin('cart_items', 'products.id', '=', 'cart_items.product_id')
+            ->where('cart_items.created_at', '>=', now()->subDays(30))
+            ->groupBy('products.id')
+            ->orderByRaw('COUNT(cart_items.id) DESC') // Order by most added to cart
+            ->take($itemCount)
+            ->get()->toArray();
+
+        if (count($topProducts) < $itemCount) {
+            $remainingCount = $itemCount - count($topProducts);
+    
+            $latestProducts = Product::latest()->take($remainingCount)->get()->toArray();
+    
+            // Merge popular and latest products
+            $products = array_merge($topProducts, $latestProducts);
+        } else {
+            $products = $topProducts;
+        }
+
         return response()->json($products);
     }
 

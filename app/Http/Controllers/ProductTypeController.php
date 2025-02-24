@@ -10,7 +10,7 @@ class ProductTypeController extends Controller
 {
     public function list()
     {
-        $categories = ProductType::with('parentType')->withCount('products')->get();
+        $categories = ProductType::orderBy('type_name')->with('parentType')->withCount('products')->get();
         return response()->json($categories);
     }
 
