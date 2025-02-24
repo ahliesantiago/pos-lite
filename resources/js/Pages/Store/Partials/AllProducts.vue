@@ -4,10 +4,9 @@ import { Link } from '@inertiajs/vue3';
 import axios from 'axios';
 import { PlusIcon  } from '@heroicons/vue/24/solid';
 import { ArchiveBoxIcon, EyeIcon, PencilSquareIcon } from '@heroicons/vue/24/outline';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
 import Alert from '@/Components/common/Alert.vue';
 import { useAlert } from '@/Composables/useAlert';
+
 // TODO: List (Historical) changes to product stocks whenever an order for new stocks and when a new customer order is made
 const alert = useAlert();
 provide('alert', alert);
@@ -24,6 +23,65 @@ const fetchProducts = async () => {
   }
 };
 
+const columns = [
+  {
+    title: 'Name',
+    dataIndex: 'product_name',
+    key: 'product_name',
+    sorter: {
+      compare: (a, b) => a.product_name.localeCompare(b.product_name),
+      multiple: 3,
+    },
+  },
+  {
+    title: 'Brand',
+    dataIndex: 'brand',
+    key: 'brand',
+    sorter: (a, b) => a.brand.localeCompare(b.brand),
+  },
+  {
+    title: 'Category',
+    key: 'category',
+    sorter: {
+      compare: (a, b) => a.category.localeCompare(b.category),
+      multiple: 2,
+    },
+  },
+  {
+    title: 'Price',
+    dataIndex: 'price',
+    key: 'price',
+    sorter: {
+      compare: (a, b) => a.price - b.price,
+      multiple: 1,
+    },
+  },
+  {
+    title: 'Stocks',
+    dataIndex: 'stocks',
+    key: 'stocks',
+    sorter: (a, b) => a.price - b.price,
+  },
+  {
+    title: 'Date Added',
+    dataIndex: 'created_at',
+    key: 'created_at',
+  },
+  {
+    title: 'Exp. Date',
+    dataIndex: 'closest_expiration_date',
+    key: 'closest_expiration_date',
+  },
+  {
+    title: 'Actions',
+    key: 'actions',
+  },
+];
+
+const onChange = (pagination, filters, sorter, extra) => {
+  console.log('changing')
+}
+
 onMounted(async () => {
   fetchProducts();
 });
@@ -31,8 +89,6 @@ onMounted(async () => {
 
 <template>
   <Alert />
-
-  <h2 class="text-2xl font-semibold">List of Products</h2>
 
   <div class="py-5 flex justify-around items-center">
     <button
@@ -54,82 +110,42 @@ onMounted(async () => {
     No products found. Add a new product to get started.
   </div>
 
-  <DataTable
-    v-if="products.length > 0"
-    :value="products"
-    sortMode="multiple"
-    scrollable
-    removableSort
-  >
-    <Column
-      field="product_name"
-      header="Name"
-      headerStyle="text-transform: uppercase; color: black;"
-      sortable
-      style="width: 30%;"
-    />
-    <Column
-      field="brand"
-      header="Brand"
-      headerStyle="text-transform: uppercase; color: black;"
-      sortable
-      style=""
-    />
-    <Column
-      field="product_type.type_name"
-      header="Category"
-      headerStyle="text-transform: uppercase; color: black;"
-      sortable
-      style=""
-    />
-    <Column
-      field="price"
-      header="Price"
-      headerStyle="text-transform: uppercase; color: black;"
-      sortable
-      style=""
-    >
-      <template #body="{ data }">
-        ₱{{ (data.price).toFixed(2) }}
+  <a-table :dataSource="products" :columns="columns" @change="onChange">
+    <template #bodyCell="{ column, record }">
+      <template v-if="column.key === 'category'">
+        {{ record.product_type.type_name }}
       </template>
-    </Column>
-    <Column
-      field="stocks"
-      header="Stocks"
-      headerStyle="text-transform: uppercase; color: black;"
-      sortable
-      style=""
-    />
-    <Column
-      field="created_at"
-      header="Date Added"
-      headerStyle="text-transform: uppercase; color: black;"
-      sortable
-      style=""
-    >
-      <template #body="{ data }">
-        {{ new Date(data.created_at).toLocaleDateString('en-US') }}
+      <template v-if="column.key === 'price'">
+        ₱{{ record.price.toFixed(2) }}
       </template>
-    </Column>
-    <Column
-      header="Actions"
-      headerStyle="text-transform: uppercase; color: black;"
-    >
-      <template #body="slotProps">
-        <div class="flex justify-between">
+      <template v-if="column.key === 'created_at'">
+        {{ new Date(record.created_at).toLocaleDateString('en-US') }}
+      </template>
+      <template v-if="column.key === 'closest_expiration_date'">
+        <span v-if="record.closest_expiration_date === null">-</span>
+        <span v-else>
+          {{ new Date(record.closest_expiration_date).toLocaleDateString('en-US') }}
+        </span>
+      </template>
+      <template v-if="column.key === 'actions'">
+        <div class="flex justify-around">
           <button
             title="View"
           >
             <EyeIcon class="h-6 w-6" />
           </button>
-          <button title="Edit">
+          <button
+            title="Edit"
+          >
             <PencilSquareIcon class="h-5 w-5" />
           </button>
-          <button class="text-orange-400 hover:text-green-400" title="Mark as Paid">
+          <button
+            class="text-orange-400 hover:text-green-400" title="Mark as Paid"
+          >
             <ArchiveBoxIcon class="h-5 w-5" />
           </button>
         </div>
       </template>
-    </Column>
-  </DataTable>
+    </template>
+  </a-table>
 </template>

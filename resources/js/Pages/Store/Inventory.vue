@@ -8,12 +8,26 @@ import Categories from './Partials/Categories.vue';
 <template>
   <Head title="Inventory" />
   <AuthenticatedLayout>
-    <div class="bg-white rounded-lg shadow p-5 my-5 mx-2">
-      <AllProducts />
-    </div>
-    
-    <div class="bg-white rounded-lg shadow p-5 my-5 mx-2">
-      <Categories />
-    </div>
+    <a-collapse :bordered="false">
+      <a-collapse-panel
+        key="1"
+        header="List of Products"
+        headerClass="text-2xl font-semibold"
+        class="bg-white rounded-lg shadow p-2 my-5 mx-2"
+        :show-arrow="false"
+      >
+        <AllProducts />
+      </a-collapse-panel>
+
+      <a-collapse-panel
+        key="2"
+        header="List of Product Categories"
+        headerClass="text-2xl font-semibold"
+        class="bg-white !rounded-lg shadow p-2 my-5 mx-2"
+        :show-arrow="false"
+      >
+        <Categories />
+      </a-collapse-panel>
+    </a-collapse>
   </AuthenticatedLayout>
 </template>

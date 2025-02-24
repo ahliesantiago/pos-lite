@@ -1,7 +1,6 @@
 <script setup>
-import { computed, watch } from 'vue'
 import Modal from '@/Components/ui/Modal.vue';
-
+// TO DO: EDIT PRODUCT
 const props = defineProps({
   isModalOpen: Boolean,
   closeModal: Function,
@@ -10,7 +9,7 @@ const props = defineProps({
   negativeAction: Function,
   product: Object,
   categories: Array,
-})
+});
 
 const validatePrice = (e) => {
   let value = parseFloat(e.target.value);
@@ -36,7 +35,7 @@ const validatePrice = (e) => {
             type="text"
             class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
-          <span v-if="product.errors.product_name" class="text-red-500 text-sm italic">
+          <span v-if="product?.errors?.product_name" class="text-red-500 text-sm italic">
             {{ product.errors.product_name }}
           </span>
         </div>
@@ -55,7 +54,7 @@ const validatePrice = (e) => {
               {{ category.type_name }}
             </option>
           </select>
-          <span v-if="product.errors.product_type_id" class="text-red-500 text-sm italic">
+          <span v-if="product?.errors?.product_type_id" class="text-red-500 text-sm italic">
             {{ product.errors.product_type_id }}
           </span>
         </div>
@@ -67,7 +66,7 @@ const validatePrice = (e) => {
             type="text"
             class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
-          <span v-if="product.errors.brand" class="text-red-500 text-sm italic">
+          <span v-if="product?.errors?.brand" class="text-red-500 text-sm italic">
             {{ product.errors.brand }}
           </span>
         </div>
@@ -79,7 +78,7 @@ const validatePrice = (e) => {
             rows="3"
             class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           ></textarea>
-          <span v-if="product.errors.description" class="text-red-500 text-sm italic">
+          <span v-if="product?.errors?.description" class="text-red-500 text-sm italic">
             {{ product.errors.description }}
           </span>
         </div>
@@ -100,7 +99,7 @@ const validatePrice = (e) => {
                 @blur="product.price = Math.max(0.25, parseFloat(product.price) || 0).toFixed(2)"
               />
             </div>
-            <span v-if="product.errors.price" class="text-red-500 text-sm italic">
+            <span v-if="product?.errors?.price" class="text-red-500 text-sm italic">
               {{ product.errors.price }}
             </span>
           </div>
@@ -120,7 +119,7 @@ const validatePrice = (e) => {
                 @blur="product.price = parseFloat(product.price).toFixed(2)"
               />
             </div>
-            <span v-if="product.errors.discounted_price_1" class="text-red-500 text-sm italic">
+            <span v-if="product?.errors?.discounted_price_1" class="text-red-500 text-sm italic">
               {{ product.errors.discounted_price_1 }}
             </span>
           </div>
@@ -133,7 +132,7 @@ const validatePrice = (e) => {
             type="number"
             class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
-          <span v-if="product.errors.stocks" class="text-red-500 text-sm italic">
+          <span v-if="product?.errors?.stocks" class="text-red-500 text-sm italic">
             {{ product.errors.stocks }}
           </span>
         </div>
@@ -145,7 +144,7 @@ const validatePrice = (e) => {
             type="date"
             class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           />
-          <span v-if="product.errors.closest_expiration_date" class="text-red-500 text-sm italic">
+          <span v-if="product?.errors?.closest_expiration_date" class="text-red-500 text-sm italic">
             {{ product.errors.closest_expiration_date }}
           </span>
         </div>

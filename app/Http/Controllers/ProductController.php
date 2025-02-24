@@ -13,8 +13,10 @@ class ProductController extends Controller
         return Inertia::render('Store/Inventory');
     }
 
-    // Fetches the list of products to be displayed on the Inventory page
-    // Returns a JSON response of the products
+    /*
+     * Fetches the list of products to be displayed on the Inventory page
+     * Returns a JSON response of the products
+     */
     public function list()
     {
         $products = Product::with('productType')->get();

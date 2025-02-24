@@ -15,8 +15,14 @@ class ProductType extends Model
         'isArchived',
     ];
     
-    public function product()
+    public function products()
     {
-        return $this->hasOne(Product::class, 'product_type_id');
+        return $this->hasMany(Product::class, 'product_type_id');
+    }
+
+    // Self-referencing relationship
+    public function parentType()
+    {
+        return $this->belongsTo(ProductType::class, 'parent_type_id');
     }
 }

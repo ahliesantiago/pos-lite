@@ -22,6 +22,30 @@ const form = useForm({
 
 const isAddModalOpen = ref(false);
 
+const columns = [
+  {
+    title: 'Category',
+    dataIndex: 'type_name',
+    key: 'type_name',
+    sorter: (a, b) => a.type_name.localeCompare(b.type_name),
+  },
+  {
+    title: '# of Products',
+    dataIndex: 'products_count',
+    key: 'products_count',
+    sorter: (a, b) => a.products_count - b.products_count,
+  },
+  {
+    title: 'Parent Category',
+    key: 'parent',
+    sorter: (a, b) => a.parent.localeCompare(b.parent),
+  },
+  {
+    title: 'Actions',
+    key: 'actions',
+  },
+];
+
 const openAddModal = () => {
   isAddModalOpen.value = true;
 };
@@ -63,8 +87,6 @@ onMounted(async () => {
 <template>
   <Alert />
 
-  <h2 class="text-2xl font-semibold">List of Product Categories</h2>
-
   <div class="py-5 flex justify-around items-center">
     <button
       @click="openAddModal"
@@ -84,29 +106,32 @@ onMounted(async () => {
   <div v-if="categories.length === 0" class="text-gray-500 text-center p-4">
     No categories found. Add a new category to get started.
   </div>
-
-  <!-- TO DO: Make list into a sortable, filterable, and paginated table -->
   
-  <ul v-if="categories.length > 0" class="space-y-2">
-    <div
-      v-for="category in categories"
-      :key="category.id"
-      class="grid grid-cols-7 p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
-    >
-      <p class="col-span-4">{{ category.type_name }}</p>
-      <div class="col-span-1 flex justify-center items-center">
-        <button @click="handleView(category)" class="p-2 rounded hover:bg-gray-100 focus:outline-none">
-          <EyeIcon class="h-5 w-5" />
-        </button>
-      </div>
-      <div class="col-span-1 flex justify-center items-center">
-        <ArchiveBoxIcon class="h-5 w-5" />
-      </div>
-      <div class="col-span-1 flex justify-center items-center">
-        <PencilSquareIcon class="h-5 w-5" />
-      </div>
-    </div>
-  </ul>
+  <a-table v-if="categories.length > 0" :dataSource="categories" :columns="columns">
+    <template #bodyCell="{ column, record }">
+      <template v-if="column.key === 'parent'">
+        <span v-if="record.parent_type === null" class="text-gray-400">N/A</span>
+        <span v-else>
+          {{ record.parent_type.type_name }}
+        </span>
+      </template>
+      <template v-if="column.key === 'actions'">
+        <div class="flex justify-around">
+          <button @click="handleView(category)" class="p-2 rounded hover:bg-gray-100 focus:outline-none">
+            <EyeIcon class="h-5 w-5" />
+          </button>
+          <button>
+            <PencilSquareIcon class="h-5 w-5" />
+          </button>
+          <button
+            class="text-orange-400 hover:text-green-400" title="Mark as Paid"
+          >
+            <ArchiveBoxIcon class="h-5 w-5" />
+          </button>
+        </div>
+      </template>
+    </template>
+  </a-table>
 
   <TypeModal
     :isModalOpen="isAddModalOpen"

@@ -5,8 +5,8 @@ import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import { ArrowUpTrayIcon, PlusIcon } from '@heroicons/vue/24/solid';
 import { fetchProductTypes } from '@/Composables/useProductOperations';
 import ProductModal from '@/Components/common/ProductModal.vue';
-
-defineProps({
+// TO DO: EDIT PRODUCT
+const props = defineProps({
   fetchProducts: Function
 });
 
@@ -46,7 +46,7 @@ const addNewProduct = () => {
       alertPopup('Product added successfully', 'success');
       closeAddModal();
       form.reset();
-      // fetchProducts();
+      props.fetchProducts();
     },
     onError: (error) => {
       alertPopup('Failed to add product', 'error');
@@ -108,13 +108,14 @@ const filteredProducts = computed(() => {
 });
 
 const addToCart = (product) => {
-  const existingItem = cart.value.find(item => item.id === product.id);
+  const cartItem = cart.value.find(item => item.id === product.id);
   const sufficientStock = product.stocks > 0;
-  if (existingItem && sufficientStock) {
-    existingItem.quantity++;
+  if (cartItem && sufficientStock) {
+    cartItem.quantity++;
+    cartItem.stocks--;
     product.stocks--;
     alertPopup(`Added ${product.product_name} to cart`, 'success');
-  } else if (!existingItem && sufficientStock) {
+  } else if (!cartItem && sufficientStock) {
     product.stocks--;
     cart.value.push({ ...product, quantity: 1 });
     alertPopup(`Added ${product.product_name} to cart`, 'success');
