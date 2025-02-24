@@ -5,7 +5,7 @@ import axios from 'axios';
 import Alert from '@/Components/common/Alert.vue';
 import { useAlert } from '@/Composables/useAlert';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import ProductList from './Partials/ProductList.vue';
+import ProductsHighlight from './Partials/ProductsHighlight.vue';
 import Cart from './Partials/Cart.vue';
 
 const cart = ref([]);
@@ -38,7 +38,7 @@ onMounted(async () => {
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
       <Alert />
       <div class="md:col-span-2 bg-white rounded-lg shadow p-4">
-        <ProductList :fetch-products="fetchProducts" />
+        <ProductsHighlight :fetch-products="fetchProducts" />
       </div>
       
       <div class="bg-white rounded-lg shadow p-4">
