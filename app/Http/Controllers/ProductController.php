@@ -57,7 +57,7 @@ class ProductController extends Controller
         ]);
 
         Product::create($validated);
-        return redirect()->route('dashboard')->with('success', 'Product added successfully');
+        return back();
     }
 
     public function bulkCreate()

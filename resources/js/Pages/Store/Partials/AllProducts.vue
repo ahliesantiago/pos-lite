@@ -6,12 +6,16 @@ import { PlusIcon  } from '@heroicons/vue/24/solid';
 import { ArchiveBoxIcon, EyeIcon, PencilSquareIcon } from '@heroicons/vue/24/outline';
 import Alert from '@/Components/common/Alert.vue';
 import { useAlert } from '@/Composables/useAlert';
+import ProductUpdates from './ProductUpdates.vue';
 
 // TODO: List (Historical) changes to product stocks whenever an order for new stocks and when a new customer order is made
 const alert = useAlert();
 provide('alert', alert);
 const alertPopup = alert.alertPopup;
 const products = ref([]);
+const isAddModalOpen = ref(false);
+const isEditModalOpen = ref(false);
+const editingProduct = ref(null);
 
 const fetchProducts = async () => {
   try {
@@ -80,7 +84,27 @@ const columns = [
 
 const onChange = (pagination, filters, sorter, extra) => {
   console.log('changing')
-}
+};
+
+const openAddModal = () => {
+  isAddModalOpen.value = true;
+};
+
+const closeAddModal = () => {
+  isAddModalOpen.value = false;
+};
+
+const openEditModal = (product) => {
+  editingProduct.value = { ...product };
+  isEditModalOpen.value = true;
+};
+
+const closeEditModal = () => {
+  isEditModalOpen.value = false
+  setTimeout(() => {
+    editingProduct.value = null;
+  }, 300);
+};
 
 onMounted(async () => {
   fetchProducts();
@@ -135,6 +159,7 @@ onMounted(async () => {
             <EyeIcon class="h-6 w-6" />
           </button>
           <button
+            @click="openEditModal(record)"
             title="Edit"
           >
             <PencilSquareIcon class="h-5 w-5" />
@@ -148,4 +173,12 @@ onMounted(async () => {
       </template>
     </template>
   </a-table>
+
+  <ProductUpdates
+    :isAddModalOpen="isAddModalOpen"
+    :isEditModalOpen="isEditModalOpen"
+    :closeAddModal="closeAddModal"
+    :closeEditModal="closeEditModal"
+    :editingProduct="editingProduct"
+  />
 </template>

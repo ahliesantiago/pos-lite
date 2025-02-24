@@ -5,6 +5,8 @@ import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import { ArrowUpTrayIcon, PlusIcon } from '@heroicons/vue/24/solid';
 import { fetchProductTypes } from '@/Composables/useProductOperations';
 import ProductModal from '@/Components/common/ProductModal.vue';
+import ProductUpdates from '@/Pages/Store/Partials/ProductUpdates.vue';
+
 // TO DO: EDIT PRODUCT
 const props = defineProps({
   fetchProducts: Function
@@ -12,22 +14,11 @@ const props = defineProps({
 
 const { alertPopup } = inject('alert');
 const products = inject('products');
-const categories = ref([]);
-const form = useForm({
-  product_name: '',
-  product_type_id: 1,
-  brand: '',
-  description: '',
-  price: null,
-  discounted_price_1: null,
-  stocks: null,
-  closest_expiration_date: ''
-});
 const longPressTimer = ref(null);
 const longPressDuration = 500; // ms
 const searchQuery = ref('');
-const isEditModalOpen = ref(false);
 const isAddModalOpen = ref(false);
+const isEditModalOpen = ref(false);
 const editingProduct = ref(null);
 const cart = inject('cart');
 
@@ -37,21 +28,6 @@ const openAddModal = () => {
 
 const closeAddModal = () => {
   isAddModalOpen.value = false;
-};
-
-const addNewProduct = () => {
-  form.post('/inventory/products', {
-    preserveScroll: true,
-    onSuccess: () => {
-      alertPopup('Product added successfully', 'success');
-      closeAddModal();
-      form.reset();
-      props.fetchProducts();
-    },
-    onError: (error) => {
-      alertPopup('Failed to add product', 'error');
-    }
-  });
 };
 
 const selectProduct = (product) => {
@@ -82,25 +58,6 @@ const closeEditModal = () => {
   }, 300);
 };
 
-const saveProduct = () => {
-  if (editingProduct.value) {
-    const index = products.value.findIndex(p => p.id === editingProduct.value.id)
-    if (index !== -1) {
-      products.value[index] = { ...editingProduct.value };
-      alertPopup('Product updated successfully', 'success');
-    }
-  }
-  closeEditModal();
-};
-
-const archiveProduct = () => {
-  if (editingProduct.value) {
-    products.value = products.value.filter(p => p.id !== editingProduct.value.id);
-    alertPopup('Product archived successfully', 'success');
-  }
-  closeEditModal();
-};
-
 const filteredProducts = computed(() => {
   if (!searchQuery.value) return products.value;
   const query = searchQuery.value.toLowerCase();
@@ -123,14 +80,6 @@ const addToCart = (product) => {
     alertPopup('Insufficient stock!', 'error', 5000);
   }
 };
-
-onMounted(async () => {
-  try {
-    categories.value = await fetchProductTypes();
-  } catch (error) {
-    alertPopup('Failed to fetch categories', 'error');
-  }
-});
 
 // Clean up long press timer
 onUnmounted(() => {
@@ -195,23 +144,11 @@ onUnmounted(() => {
     </li>
   </ul>
 
-  <ProductModal
-    :isModalOpen="isEditModalOpen"
-    :closeModal="closeEditModal"
-    :action="'editing'"
-    :positiveAction="saveProduct"
-    :negativeAction="archiveProduct"
-    :product="editingProduct"
-    :categories="categories"
-  />
-
-  <ProductModal
-    :isModalOpen="isAddModalOpen"
-    :closeModal="closeAddModal"
-    :action="'adding'"
-    :positiveAction="addNewProduct"
-    :negativeAction="form.reset"
-    :product="form"
-    :categories="categories"
+  <ProductUpdates
+    :isAddModalOpen="isAddModalOpen"
+    :isEditModalOpen="isEditModalOpen"
+    :closeAddModal="closeAddModal"
+    :closeEditModal="closeEditModal"
+    :editingProduct="editingProduct"
   />
 </template>
