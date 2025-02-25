@@ -39,6 +39,7 @@ const validatePrice = (e) => {
             {{ product.errors.product_name }}
           </span>
         </div>
+
         <div>
           <label for="product_type_id" class="block text-sm font-medium text-gray-700">Type or Category</label>
           <select
@@ -58,6 +59,7 @@ const validatePrice = (e) => {
             {{ product.errors.product_type_id }}
           </span>
         </div>
+
         <div>
           <label for="brand" class="block text-sm font-medium text-gray-700">Brand</label>
           <input
@@ -70,6 +72,7 @@ const validatePrice = (e) => {
             {{ product.errors.brand }}
           </span>
         </div>
+
         <div>
           <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
           <textarea
@@ -82,8 +85,9 @@ const validatePrice = (e) => {
             {{ product.errors.description }}
           </span>
         </div>
+
         <div class="grid grid-cols-4 gap-4">
-          <div class="col-span-4 sm:col-span-2">
+          <div class="col-span-4 sm:col-span-1">
             <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
             <div class="mt-1 flex items-center">
               <span class="bg-gray-200 text-gray-600 p-2 rounded-l-md border-t border-b border border-gray-300">
@@ -103,27 +107,72 @@ const validatePrice = (e) => {
               {{ product.errors.price }}
             </span>
           </div>
-          <div class="col-span-4 sm:col-span-2">
-            <label for="discounted_price_1" class="block text-sm font-medium text-gray-700">Discounted</label>
-            <div class="mt-1 flex items-center">
-              <span class="bg-gray-200 text-gray-600 p-2 rounded-l-md border-t border-b border border-gray-300">
-                ₱
-              </span>
-              <input
-                id="discounted_price_1"
-                v-model="product.discounted_price_1"
-                type="number"
-                min="0"
-                step="1"
-                class="block p-2 w-full rounded-r-md border-l-0 border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                @blur="product.price = parseFloat(product.price).toFixed(2)"
-              />
+          <div class="col-span-4 sm:col-span-3 flex flex-col">
+            <label for="discounted_price_1" class="block text-sm font-medium text-gray-700">Discounted prices:</label>
+            <div class="flex gap-3">
+              <div>
+                <div class="mt-1 flex items-center">
+                  <span class="bg-gray-200 text-gray-600 p-2 rounded-l-md border-t border-b border border-gray-300">
+                    ₱
+                  </span>
+                  <input
+                    id="discounted_price_1"
+                    v-model="product.discounted_price_1"
+                    type="number"
+                    min="0"
+                    step="1"
+                    class="block p-2 w-full rounded-r-md border-l-0 border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    @blur="product.discounted_price_1 = parseFloat(product.discounted_price_1).toFixed(2)"
+                  />
+                </div>
+                <span v-if="product?.errors?.discounted_price_1" class="text-red-500 text-sm italic">
+                  {{ product.errors.discounted_price_1 }}
+                </span>
+              </div>
+
+              <div>
+                <div class="mt-1 flex items-center">
+                  <span class="bg-gray-200 text-gray-600 p-2 rounded-l-md border-t border-b border border-gray-300">
+                    ₱
+                  </span>
+                  <input
+                    id="discounted_price_2"
+                    v-model="product.discounted_price_2"
+                    type="number"
+                    min="0"
+                    step="1"
+                    class="block p-2 w-full rounded-r-md border-l-0 border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    @blur="product.discounted_price_2 = parseFloat(product.discounted_price_2).toFixed(2)"
+                  />
+                </div>
+                <span v-if="product?.errors?.discounted_price_2" class="text-red-500 text-sm italic">
+                  {{ product.errors.discounted_price_2 }}
+                </span>
+              </div>
+
+              <div>
+                <div class="mt-1 flex items-center">
+                  <span class="bg-gray-200 text-gray-600 p-2 rounded-l-md border-t border-b border border-gray-300">
+                    ₱
+                  </span>
+                  <input
+                    id="discounted_price_3"
+                    v-model="product.discounted_price_3"
+                    type="number"
+                    min="0"
+                    step="1"
+                    class="block p-2 w-full rounded-r-md border-l-0 border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    @blur="product.discounted_price_3 = parseFloat(product.discounted_price_3).toFixed(2)"
+                  />
+                </div>
+                <span v-if="product?.errors?.discounted_price_3" class="text-red-500 text-sm italic">
+                  {{ product.errors.discounted_price_3 }}
+                </span>
+              </div>
             </div>
-            <span v-if="product?.errors?.discounted_price_1" class="text-red-500 text-sm italic">
-              {{ product.errors.discounted_price_1 }}
-            </span>
           </div>
         </div>
+
         <div>
           <label for="stocks" class="block text-sm font-medium text-gray-700">Available Stock</label>
           <input
@@ -136,6 +185,7 @@ const validatePrice = (e) => {
             {{ product.errors.stocks }}
           </span>
         </div>
+
         <div>
           <label for="closest_expiration_date" class="block text-sm font-medium text-gray-700">Expiration Date (if applicable)</label>
           <input
