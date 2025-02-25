@@ -12,7 +12,7 @@ class ProductType extends Model
         'type_name',
         'description',
         'parent_type_id',
-        'isArchived',
+        'is_archived',
     ];
     
     public function products()

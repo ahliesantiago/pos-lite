@@ -19,7 +19,7 @@ class ProductController extends Controller
      */
     public function list()
     {
-        $products = Product::orderBy('product_name')->with('productType')->get();
+        $products = Product::where('is_archived', 0)->orderBy('product_name')->with('productType')->get();
         return response()->json($products);
     }
 
@@ -32,6 +32,7 @@ class ProductController extends Controller
         $topProducts = Product::select('products.*')
             ->leftJoin('cart_items', 'products.id', '=', 'cart_items.product_id')
             ->where('cart_items.created_at', '>=', now()->subDays(30))
+            ->where('is_archived', 0)
             ->groupBy('products.id')
             ->orderByRaw('COUNT(cart_items.id) DESC') // Order by most added to cart
             ->take($itemCount)
@@ -88,6 +89,12 @@ class ProductController extends Controller
         ]);
 
         Product::find($product_id)->update($validated);
+        return back();
+    }
+
+    public function archive(Product $product)
+    {
+        $product->update(['is_archived' => true]);
         return back();
     }
 

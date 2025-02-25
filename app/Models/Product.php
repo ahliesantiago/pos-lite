@@ -18,7 +18,7 @@ class Product extends Model
         'purchase_wholesale_price',
         'stocks',
         'closest_expiration_date',
-        'isArchived',
+        'is_archived',
     ];
 
     public function cartItems()

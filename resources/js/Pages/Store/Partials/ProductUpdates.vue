@@ -82,10 +82,24 @@ const saveProduct = () => {
 };
 
 const archiveProduct = () => {
-  if (props.editingProduct) {
-    // implement product archiving
+  if (confirm('Are you sure you want to archive this product?')) {
+    router.put(`/inventory/products/${props.editingProduct.id}/archive`, {}, {
+      preserveScroll: true,
+      onSuccess: (response) => {
+        router.visit(window.location.href, { 
+          only: ['products'],
+          preserveScroll: true,
+        });
+
+        alertPopup(response.props.message || 'Product archived successfully', 'success');
+        props.closeEditModal();
+        form.reset();
+      },
+      onError: (error) => {
+        alertPopup('Failed to archive product', 'error');
+      }
+    });
   }
-  // props.closeEditModal();
 };
 
 onMounted(async () => {
