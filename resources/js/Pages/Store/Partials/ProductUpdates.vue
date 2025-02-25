@@ -1,5 +1,5 @@
 <script setup>
-import { inject, onMounted, ref } from 'vue';
+import { inject, onMounted, ref, watch } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 import { fetchProductTypes } from '@/Composables/useProductOperations';
 import ProductModal from '@/Components/common/ProductModal.vue';
@@ -28,6 +28,19 @@ const form = useForm({
   closest_expiration_date: ''
 });
 
+// Update form when editingProduct changes
+watch(() => props.editingProduct, (newProduct) => {
+  if (newProduct) {
+    Object.keys(form).forEach(key => {
+      if (key in newProduct) {
+        form[key] = newProduct[key];
+      }
+    });
+  } else {
+    form.reset();
+  }
+}, { immediate: true });
+
 const addNewProduct = () => {
   form.post('/inventory/products', {
     preserveScroll: true,
@@ -48,17 +61,31 @@ const addNewProduct = () => {
 };
 
 const saveProduct = () => {
-  if (editingProduct.value) {
-    // implement product edit
+  if (props.editingProduct) {
+    form.put(`/inventory/products/${props.editingProduct.id}`, {
+      preserveScroll: true,
+      onSuccess: (response) => {
+        router.visit(window.location.href, { 
+          only: ['products'],
+          preserveScroll: true,
+        });
+
+        alertPopup(response.props.message || 'Product updated successfully', 'success');
+        props.closeEditModal();
+        form.reset();
+      },
+      onError: (error) => {
+        alertPopup('Failed to update product', 'error');
+      }
+    });
   }
-  closeEditModal();
 };
 
 const archiveProduct = () => {
-  if (editingProduct.value) {
+  if (props.editingProduct) {
     // implement product archiving
   }
-  closeEditModal();
+  // props.closeEditModal();
 };
 
 onMounted(async () => {
@@ -87,7 +114,7 @@ onMounted(async () => {
     :action="'editing'"
     :positiveAction="saveProduct"
     :negativeAction="archiveProduct"
-    :product="editingProduct"
+    :product="form"
     :categories="categories"
   />
 </template>

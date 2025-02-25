@@ -51,16 +51,6 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
-    public function show()
-    {
-
-    }
-
-    public function create()
-    {
-        
-    }
-
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -78,6 +68,26 @@ class ProductController extends Controller
         ]);
 
         Product::create($validated);
+        return back();
+    }
+
+    public function update(Request $request, $product_id)
+    {
+        $validated = request()->validate([
+            'product_name' => 'required|unique:products,product_name,' . $product_id,
+            'product_type_id' => 'required|exists:product_types,id',
+            'brand' => 'required',
+            'description' => 'nullable',
+            'price' => 'required|numeric',
+            'discounted_price_1' => 'nullable|numeric',
+            'discounted_price_2' => 'nullable|numeric',
+            'discounted_price_3' => 'nullable|numeric',
+            'purchase_wholesale_price' => 'nullable|numeric',
+            'stocks' => 'required|integer|numeric|min:0',
+            'closest_expiration_date' => 'nullable|date',
+        ]);
+
+        Product::find($product_id)->update($validated);
         return back();
     }
 

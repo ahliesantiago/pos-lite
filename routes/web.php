@@ -17,6 +17,7 @@ Route::middleware(['auth', CheckDefaultPassword::class])->group(function () {
     Route::get('/inventory/products/list', [ProductController::class, 'list'])->name('products.list');
     Route::get('/inventory/products/featured/{count}', [ProductController::class, 'featured'])->name('products.featured');
     Route::post('/inventory/products', [ProductController::class, 'store'])->name('products.store');
+    Route::put('/inventory/products/{product_id}', [ProductController::class, 'update'])->name('products.update');
     Route::get('/inventory/products/bulk-add', [ProductController::class, 'bulkCreate'])->name('products.bulk-add');
     
     Route::get('/inventory/types/list', [ProductTypeController::class, 'list'])->name('types.list');
