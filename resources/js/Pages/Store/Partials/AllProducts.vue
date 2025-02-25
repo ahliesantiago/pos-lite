@@ -1,11 +1,12 @@
 <script setup>
-import { onMounted, provide, ref } from 'vue';
+import { computed, onMounted, provide, ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import axios from 'axios';
 import { PlusIcon  } from '@heroicons/vue/24/solid';
 import { ArchiveBoxIcon, EyeIcon, PencilSquareIcon } from '@heroicons/vue/24/outline';
 import Alert from '@/Components/common/Alert.vue';
 import { useAlert } from '@/Composables/useAlert';
+import Modal from '@/Components/ui/Modal.vue';
 import ProductUpdates from './ProductUpdates.vue';
 
 // TODO: List (Historical) changes to product stocks whenever an order for new stocks and when a new customer order is made
@@ -15,7 +16,32 @@ const alertPopup = alert.alertPopup;
 const products = ref([]);
 const isAddModalOpen = ref(false);
 const isEditModalOpen = ref(false);
+const isViewModalOpen = ref(false);
 const editingProduct = ref(null);
+const viewingProduct = ref(null);
+
+const discountPrices = computed(() => {
+    if (!viewingProduct.value) return [];
+    return ['discounted_price_1', 'discounted_price_2', 'discounted_price_3']
+        .map((key) => viewingProduct.value[key])
+        .filter((price) => price !== undefined && price !== null);
+});
+
+const daysUntilExpiration = computed(() => {
+  if (!viewingProduct.value?.closest_expiration_date) return null;
+  
+  const expirationDate = new Date(viewingProduct.value.closest_expiration_date);
+  const today = new Date();
+  
+  // Reset time portion to compare dates only
+  expirationDate.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+  
+  const diffTime = expirationDate - today;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  return diffDays;
+});
 
 const fetchProducts = async () => {
   try {
@@ -109,6 +135,15 @@ const closeEditModal = () => {
   }, 300);
 };
 
+const openViewModal = (product) => {
+  viewingProduct.value = { ... product };
+  isViewModalOpen.value = true;
+}
+
+const closeViewModal = () => {
+  isViewModalOpen.value = false;
+}
+
 onMounted(async () => {
   fetchProducts();
 });
@@ -157,6 +192,7 @@ onMounted(async () => {
       <template v-if="column.key === 'actions'">
         <div class="flex justify-around">
           <button
+            @click="openViewModal(record)"
             title="View"
           >
             <EyeIcon class="h-6 w-6" />
@@ -184,4 +220,45 @@ onMounted(async () => {
     :closeEditModal="closeEditModal"
     :editingProduct="editingProduct"
   />
+
+  <Modal
+    :isModalOpen="isViewModalOpen"
+    :closeModal="closeViewModal"
+    :title="'Product Details for ' + viewingProduct?.product_name"
+  >
+    <div class="mt-5">
+      <p>
+        <span class="font-bold">Brand</span>:
+        {{ viewingProduct.brand }}
+      </p>
+      <p>
+        <span class="font-bold">Product Type</span>:
+        {{ viewingProduct.product_type.type_name }}
+      </p>
+      <p>
+        <span class="font-bold">Retail Price</span>:
+        ₱{{ viewingProduct.price.toFixed(2) }}
+      </p>
+      <p v-if="discountPrices.length">
+        <span class="font-bold">Discounted Prices</span>:
+        <span v-for="(price, index) in discountPrices" :key="index">
+          ₱{{ price.toFixed(2) }} <span v-if="index < discountPrices.length - 1">/</span>
+        </span>
+      </p>
+      <p v-if="viewingProduct.description">
+        <span class="font-bold">Description</span>:
+        {{ viewingProduct.description }}
+      </p>
+      <p>
+        <span class="font-bold">Available Stocks</span>:
+        {{ viewingProduct.stocks }}
+      </p>
+      <p v-if="viewingProduct.closest_expiration_date">
+        <span class="font-bold">Closest Expiration Date</span>:
+        {{ new Date(viewingProduct.closest_expiration_date).toLocaleDateString('en-US') }}
+        (<template v-if="daysUntilExpiration > 0">{{ daysUntilExpiration }} {{ daysUntilExpiration === 1 ? 'day' : 'days' }} left</template>
+        <template v-else><span class="text-red-500">Expired</span>; {{ Math.abs(daysUntilExpiration) }} {{ Math.abs(daysUntilExpiration) === 1 ? 'day has' : 'days have' }} past</template>)
+      </p>
+    </div>
+  </Modal>
 </template>
