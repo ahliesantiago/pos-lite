@@ -169,11 +169,12 @@ onMounted(async () => {
     </Link>
   </div>
 
-  <div v-if="products.length === 0" class="text-gray-500 text-center p-4">
-    No products found. Add a new product to get started.
-  </div>
-
-  <a-table :dataSource="products" :columns="columns" @change="onChange">
+  <a-table
+    :dataSource="products"
+    :columns="columns"
+    @change="onChange"
+    :locale="{ emptyText: 'No orders found. Add a new product to get started.' }"
+  >
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'brand'">
         <span v-if="record.brand === null">-</span>

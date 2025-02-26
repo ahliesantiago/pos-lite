@@ -12,6 +12,7 @@ const isOrderModalOpen = ref(false);
 const selectedOrder = ref(null);
 const cartItems = ref(null);
 
+// TODO: Column filtering
 const columns = [
   {
     title: 'Paid?',
@@ -60,7 +61,6 @@ const fetchCartDetails = async (cartId) => {
     const response = await axios.get(`/orders/${cartId}`);
     cartItems.value = response.data;
     isOrderModalOpen.value = true;
-    console.log('selectedOrder', selectedOrder.value, 'cartItems', cartItems.value);
   } catch (error) {
     console.error("Failed to fetch cart items", error);
   }
@@ -81,11 +81,12 @@ const closeOrderModal = () => {
     <div class="bg-white rounded-lg shadow p-4">
       <h2 class="text-2xl font-semibold">List of Orders</h2>
 
-      <div v-if="orders.length === 0" class="text-gray-500 text-center p-4">
-        No orders found. Add a new product to get started.
-      </div>
-
-      <a-table :dataSource="orders" :columns="columns" @change="onChange">
+      <a-table
+        :dataSource="orders"
+        :columns="columns"
+        @change="onChange"
+        :locale="{ emptyText: 'No orders found.' }"
+      >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'is_paid'">
             <span v-if="record.is_paid" class="text-green-500">Paid</span>

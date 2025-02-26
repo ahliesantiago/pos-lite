@@ -103,11 +103,12 @@ onMounted(async () => {
     </Link>
   </div>
 
-  <div v-if="categories.length === 0" class="text-gray-500 text-center p-4">
-    No categories found. Add a new category to get started.
-  </div>
-  
-  <a-table v-if="categories.length > 0" :dataSource="categories" :columns="columns">
+  <a-table
+    :dataSource="categories"
+    :columns="columns"
+    @change="onChange"
+    :locale="{ emptyText: 'No categories found. Add a new category to get started.' }"
+  >
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'parent'">
         <span v-if="record.parent_type === null" class="text-gray-400">N/A</span>
@@ -124,7 +125,7 @@ onMounted(async () => {
             <PencilSquareIcon class="h-5 w-5" />
           </button>
           <button
-            class="text-orange-400 hover:text-green-400" title="Mark as Paid"
+            class="text-orange-400 hover:text-green-400" title="Archive"
           >
             <ArchiveBoxIcon class="h-5 w-5" />
           </button>
