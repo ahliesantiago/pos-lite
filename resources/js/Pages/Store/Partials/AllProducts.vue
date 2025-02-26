@@ -174,6 +174,12 @@ onMounted(async () => {
 
   <a-table :dataSource="products" :columns="columns" @change="onChange">
     <template #bodyCell="{ column, record }">
+      <template v-if="column.key === 'brand'">
+        <span v-if="record.brand === null">-</span>
+        <span v-else>
+          {{ record.brand }}
+        </span>
+      </template>
       <template v-if="column.key === 'category'">
         {{ record.product_type.type_name }}
       </template>
@@ -227,7 +233,7 @@ onMounted(async () => {
     :title="'Product Details for ' + viewingProduct?.product_name"
   >
     <div class="mt-5">
-      <p>
+      <p v-if="viewingProduct.brand">
         <span class="font-bold">Brand</span>:
         {{ viewingProduct.brand }}
       </p>

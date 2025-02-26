@@ -61,7 +61,7 @@ const validatePrice = (e) => {
         </div>
 
         <div>
-          <label for="brand" class="block text-sm font-medium text-gray-700">Brand</label>
+          <label for="brand" class="block text-sm font-medium text-gray-700">Brand (optional)</label>
           <input
             id="brand"
             v-model="product.brand"
@@ -74,7 +74,7 @@ const validatePrice = (e) => {
         </div>
 
         <div>
-          <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+          <label for="description" class="block text-sm font-medium text-gray-700">Description (optional)</label>
           <textarea
             id="description"
             v-model="product.description"
@@ -108,7 +108,7 @@ const validatePrice = (e) => {
             </span>
           </div>
           <div class="col-span-4 sm:col-span-3 flex flex-col">
-            <label for="discounted_price_1" class="block text-sm font-medium text-gray-700">Discounted prices:</label>
+            <label for="discounted_price_1" class="block text-sm font-medium text-gray-700">Discounted prices (optional):</label>
             <div class="flex gap-3">
               <div>
                 <div class="mt-1 flex items-center">
