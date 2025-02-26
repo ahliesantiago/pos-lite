@@ -32,7 +32,7 @@ class ProductController extends Controller
         $topProducts = Product::select('products.*')
             ->leftJoin('cart_items', 'products.id', '=', 'cart_items.product_id')
             ->where('cart_items.created_at', '>=', now()->subDays(30))
-            ->where('is_archived', 0)
+            ->where('products.is_archived', 0)
             ->groupBy('products.id')
             ->orderByRaw('COUNT(cart_items.id) DESC') // Order by most added to cart
             ->take($itemCount)
@@ -41,7 +41,7 @@ class ProductController extends Controller
         if (count($topProducts) < $itemCount) {
             $remainingCount = $itemCount - count($topProducts);
     
-            $latestProducts = Product::latest()->take($remainingCount)->get()->toArray();
+            $latestProducts = Product::latest()->where('is_archived', 0)->take($remainingCount)->get()->toArray();
     
             // Merge popular and latest products
             $products = array_merge($topProducts, $latestProducts);
