@@ -6,6 +6,7 @@ import { PlusIcon  } from '@heroicons/vue/24/solid';
 import { ArchiveBoxIcon, EyeIcon, PencilSquareIcon } from '@heroicons/vue/24/outline';
 import Alert from '@/Components/common/Alert.vue';
 import { useAlert } from '@/Composables/useAlert';
+import { archiveProduct } from '@/Composables/useProductOperations';
 import Modal from '@/Components/ui/Modal.vue';
 import ProductUpdates from './ProductUpdates.vue';
 
@@ -210,7 +211,9 @@ onMounted(async () => {
             <PencilSquareIcon class="h-5 w-5" />
           </button>
           <button
-            class="text-orange-400 hover:text-green-400" title="Mark as Paid"
+            class="text-orange-400 hover:text-green-400"
+            @click="archiveProduct(record.id, closeEditModal, alertPopup)"
+            title="Archive"
           >
             <ArchiveBoxIcon class="h-5 w-5" />
           </button>

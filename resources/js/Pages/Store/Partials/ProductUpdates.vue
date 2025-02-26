@@ -1,7 +1,7 @@
 <script setup>
 import { inject, onMounted, ref, watch } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
-import { fetchProductTypes } from '@/Composables/useProductOperations';
+import { archiveProduct, fetchProductTypes } from '@/Composables/useProductOperations';
 import ProductModal from '@/Components/common/ProductModal.vue';
 
 const props = defineProps({
@@ -81,27 +81,6 @@ const saveProduct = () => {
   }
 };
 
-const archiveProduct = () => {
-  if (confirm('Are you sure you want to archive this product?')) {
-    router.put(`/inventory/products/${props.editingProduct.id}/archive`, {}, {
-      preserveScroll: true,
-      onSuccess: (response) => {
-        router.visit(window.location.href, { 
-          only: ['products'],
-          preserveScroll: true,
-        });
-
-        alertPopup(response.props.message || 'Product archived successfully', 'success');
-        props.closeEditModal();
-        form.reset();
-      },
-      onError: (error) => {
-        alertPopup('Failed to archive product', 'error');
-      }
-    });
-  }
-};
-
 onMounted(async () => {
   try {
     categories.value = await fetchProductTypes();
@@ -127,7 +106,7 @@ onMounted(async () => {
     :closeModal="closeEditModal"
     :action="'editing'"
     :positiveAction="saveProduct"
-    :negativeAction="archiveProduct"
+    :negativeAction="() => archiveProduct(editingProduct.id, closeEditModal, alertPopup, form)"
     :product="form"
     :categories="categories"
   />
