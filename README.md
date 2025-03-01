@@ -5,7 +5,7 @@ The goal is to make this usable on the browser as a web app as well as on mobile
 
 ## Features
   - [x] Adding and editing products
-  - [ ] Quick lookup of product price and availability
+  - [x] Quick lookup of product price and availability
   - [ ] List and store information about customer purchases
     - note: no information (outside of the optional name) is stored about customers
   - [ ] Tracking available stocks of products
@@ -29,7 +29,7 @@ The goal is to make this usable on the browser as a web app as well as on mobile
 ## Resources
 - TBA
 
-# Setup Guide
+## Setup Guide
 To set up the project locally, ensure that you have the following installed on your device:
 *	PHP (version 8.x or higher)
 *	Composer (latest version)

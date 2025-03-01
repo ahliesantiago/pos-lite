@@ -10,8 +10,6 @@ import Cart from './Partials/Cart.vue';
 
 const cart = ref([]);
 const products = ref([]);
-
-// Create a single instance of alert
 const alert = useAlert();
 provide('alert', alert);
 provide('cart', cart);
@@ -27,6 +25,17 @@ const fetchProducts = async () => {
   }
 };
 
+const searchProducts = async (query) => {
+  if (!query) return fetchProducts();
+  try {
+    const { data } = await axios.get('/inventory/products/search', { params: { query } });
+    products.value = data;
+  } catch (error) {
+    console.error('Failed to search products', error);
+    alert.error('Failed to search products');
+  }
+}
+
 onMounted(async () => {
   fetchProducts();
 });
@@ -38,7 +47,7 @@ onMounted(async () => {
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
       <Alert />
       <div class="md:col-span-2 bg-white rounded-lg shadow p-4">
-        <ProductsHighlight :fetch-products="fetchProducts" />
+        <ProductsHighlight :search-products="searchProducts" />
       </div>
       
       <div class="bg-white rounded-lg shadow p-4">

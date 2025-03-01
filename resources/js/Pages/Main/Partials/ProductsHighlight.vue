@@ -1,26 +1,33 @@
 <script setup>
-import { computed, inject, onMounted, onUnmounted, ref } from 'vue';
-import { Link, useForm } from '@inertiajs/vue3';
+import { computed, inject, onUnmounted, ref, watch } from 'vue';
+import { Link } from '@inertiajs/vue3';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import { ArrowUpTrayIcon, PlusIcon } from '@heroicons/vue/24/solid';
-import { fetchProductTypes } from '@/Composables/useProductOperations';
-import ProductModal from '@/Components/common/ProductModal.vue';
 import ProductUpdates from '@/Pages/Store/Partials/ProductUpdates.vue';
 
-// TO DO: EDIT PRODUCT
 const props = defineProps({
-  fetchProducts: Function
+  searchProducts: Function
 });
 
 const { alertPopup } = inject('alert');
 const products = inject('products');
+const searchQuery = ref('');
 const longPressTimer = ref(null);
 const longPressDuration = 500; // ms
-const searchQuery = ref('');
 const isAddModalOpen = ref(false);
 const isEditModalOpen = ref(false);
 const editingProduct = ref(null);
 const cart = inject('cart');
+
+watch(searchQuery, (newQuery) => {
+  props.searchProducts(newQuery);
+});
+
+const filteredProducts = computed(() => {
+  if (!searchQuery.value) return products.value;
+  const query = searchQuery.value.toLowerCase();
+  return products.value.filter(product => product.product_name.toLowerCase().includes(query));
+});
 
 const openAddModal = () => {
   isAddModalOpen.value = true;
@@ -57,12 +64,6 @@ const closeEditModal = () => {
     editingProduct.value = null;
   }, 300);
 };
-
-const filteredProducts = computed(() => {
-  if (!searchQuery.value) return products.value;
-  const query = searchQuery.value.toLowerCase();
-  return products.value.filter(product => product.product_name.toLowerCase().includes(query));
-});
 
 const addToCart = (product) => {
   const cartItem = cart.value.find(item => item.id === product.id);

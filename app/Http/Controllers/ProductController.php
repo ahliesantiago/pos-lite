@@ -52,6 +52,20 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        $products = Product::where('is_archived', 0)
+            ->when($query, function ($q) use ($query) {
+                $q->where('product_name', 'like', '%' . $query . '%');
+            })
+            ->orderBy('product_name')
+            ->get()
+            ->toArray();
+
+        return response()->json($products);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

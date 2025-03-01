@@ -16,6 +16,7 @@ Route::middleware(['auth', CheckDefaultPassword::class])->group(function () {
 
     Route::get('/inventory/products/list', [ProductController::class, 'list'])->name('products.list');
     Route::get('/inventory/products/featured/{count}', [ProductController::class, 'featured'])->name('products.featured');
+    Route::get('/inventory/products/search', [ProductController::class, 'search'])->name('products.search');
     Route::post('/inventory/products', [ProductController::class, 'store'])->name('products.store');
     Route::put('/inventory/products/{product_id}', [ProductController::class, 'update'])->name('products.update');
     Route::put('/inventory/products/{product}/archive', [ProductController::class, 'archive'])->name('products.archive');
