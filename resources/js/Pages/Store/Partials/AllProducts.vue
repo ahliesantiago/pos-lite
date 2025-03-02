@@ -203,7 +203,7 @@ onMounted(async () => {
             @click="openViewModal(record)"
             title="View"
           >
-            <EyeIcon class="h-6 w-6" />
+            <EyeIcon class="h-5 w-5" />
           </button>
           <button
             @click="openEditModal(record)"
@@ -269,6 +269,14 @@ onMounted(async () => {
         (<template v-if="daysUntilExpiration > 0">{{ daysUntilExpiration }} {{ daysUntilExpiration === 1 ? 'day' : 'days' }} left</template>
         <template v-else><span class="text-red-500">Expired</span>; {{ Math.abs(daysUntilExpiration) }} {{ Math.abs(daysUntilExpiration) === 1 ? 'day has' : 'days have' }} past</template>)
       </p>
+      <div class="flex justify-center">
+        <button
+          @click="closeViewModal"
+          class="border px-5 py-3 text-white bg-blue-500 border-blue-400 rounded-md"
+        >
+          OK
+        </button>
+      </div>
     </div>
   </Modal>
 </template>
