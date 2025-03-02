@@ -112,6 +112,17 @@ class ProductController extends Controller
         return back();
     }
 
+    public function restock(Request $request, Product $product)
+    {
+        $validated = $request->validate([
+            'stocks' => 'required|integer|numeric|min:0',
+            'closest_expiration_date' => 'nullable|date',
+        ]);
+
+        $product->update($validated);
+        return back();
+    }
+
     public function bulkCreate()
     {
         return Inertia::render('Store/BulkAddProducts');

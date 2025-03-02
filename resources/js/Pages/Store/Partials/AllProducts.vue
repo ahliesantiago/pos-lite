@@ -3,10 +3,10 @@ import { computed, onMounted, provide, ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import axios from 'axios';
 import { PlusIcon  } from '@heroicons/vue/24/solid';
-import { ArchiveBoxIcon, EyeIcon, PencilSquareIcon } from '@heroicons/vue/24/outline';
+import { ArchiveBoxIcon, CalculatorIcon, EyeIcon, PencilSquareIcon } from '@heroicons/vue/24/outline';
 import Alert from '@/Components/common/Alert.vue';
 import { useAlert } from '@/Composables/useAlert';
-import { archiveProduct } from '@/Composables/useProductOperations';
+import { archiveProduct, restockProduct } from '@/Composables/useProductOperations';
 import Modal from '@/Components/ui/Modal.vue';
 import ProductUpdates from './ProductUpdates.vue';
 
@@ -17,6 +17,8 @@ const alertPopup = alert.alertPopup;
 const products = ref([]);
 const isAddModalOpen = ref(false);
 const isEditModalOpen = ref(false);
+const isRestockModalOpen = ref(false);
+const restockDetails = ref({ id: null, product_name: null, stocks: null, closest_expiration_date: null })
 const isViewModalOpen = ref(false);
 const editingProduct = ref(null);
 const viewingProduct = ref(null);
@@ -136,14 +138,28 @@ const closeEditModal = () => {
   }, 300);
 };
 
+const openRestockModal = (product) => {
+  restockDetails.value = {
+    id: product.id,
+    product_name: product.product_name,
+    stocks: product.stocks,
+    closest_expiration_date: product.closest_expiration_date,
+  }
+  isRestockModalOpen.value = true;
+};
+
+const closeRestockModal = () => {
+  isRestockModalOpen.value = false;
+};
+
 const openViewModal = (product) => {
   viewingProduct.value = { ... product };
   isViewModalOpen.value = true;
-}
+};
 
 const closeViewModal = () => {
   isViewModalOpen.value = false;
-}
+};
 
 onMounted(async () => {
   fetchProducts();
@@ -212,6 +228,13 @@ onMounted(async () => {
             <PencilSquareIcon class="h-5 w-5" />
           </button>
           <button
+            class="text-yellow-500"
+            @click="openRestockModal(record)"
+            title="Restock"
+          >
+            <CalculatorIcon class="h-5 w-5" />
+          </button>
+          <button
             class="text-orange-400 hover:text-green-400"
             @click="archiveProduct(record.id, closeEditModal, alertPopup)"
             title="Archive"
@@ -275,6 +298,51 @@ onMounted(async () => {
           class="border px-5 py-3 text-white bg-blue-500 border-blue-400 rounded-md"
         >
           OK
+        </button>
+      </div>
+    </div>
+  </Modal>
+
+  <Modal
+    :isModalOpen="isRestockModalOpen"
+    :closeModal="closeRestockModal"
+    :title="'Restock ' + restockDetails?.product_name"
+  >
+    <div class="mt-5">
+      <div>
+        <label for="stocks" class="block text-sm font-medium text-gray-700">Available Stock</label>
+        <input
+          id="stocks"
+          v-model="restockDetails.stocks"
+          type="number"
+          class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+        />
+      </div>
+
+      <div>
+        <label for="closest_expiration_date" class="block text-sm font-medium text-gray-700">Batch (Closest) Expiration Date (if applicable)</label>
+        <input
+          id="closest_expiration_date"
+          v-model="restockDetails.closest_expiration_date"
+          type="date"
+          class="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+        />
+      </div>
+
+      <div class="mt-4 flex justify-end space-x-2">
+        <button
+          type="button"
+          class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+          @click="restockProduct(restockDetails, closeRestockModal, alertPopup)"
+        >
+          Save
+        </button>
+        <button
+          type="button"
+          class="inline-flex justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+          @click="closeRestockModal"
+        >
+          Cancel
         </button>
       </div>
     </div>

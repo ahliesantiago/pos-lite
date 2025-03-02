@@ -31,3 +31,21 @@ export const archiveProduct = (id, closeEditModal, alertPopup, form = null) => {
     });
   }
 };
+
+export const restockProduct = (details, closeRestockModal, alertPopup,) => {
+  router.put(`/inventory/products/${details.id}/restock`, details, {
+    preserveScroll: true,
+    onSuccess: (response) => {
+      router.visit(window.location.href, { 
+        only: ['products'],
+        preserveScroll: true,
+      });
+
+      alertPopup(response.props.message || 'Stocks updated successfully', 'success');
+      closeRestockModal();
+    },
+    onError: (error) => {
+      alertPopup('Failed to restock product', 'error');
+    }
+  });
+};
