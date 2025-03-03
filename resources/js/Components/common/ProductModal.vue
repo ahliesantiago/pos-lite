@@ -17,6 +17,24 @@ const validatePrice = (e) => {
     props.product.price = 0.25;
   }
 }
+
+const handleDiscountInput = (event, field) => {
+  const value = event.target.value.trim();
+  if (value === '') {
+    props.product[field] = null;
+  } else {
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue) && numValue >= 0) {
+      props.product[field] = numValue;
+    }
+  }
+}
+
+const handleDiscountBlur = (field) => {
+  if (props.product[field] !== null && !isNaN(props.product[field])) {
+    props.product[field] = parseFloat(props.product[field]).toFixed(2);
+  }
+}
 </script>
 
 <template>
@@ -118,11 +136,10 @@ const validatePrice = (e) => {
                   <input
                     id="discounted_price_1"
                     v-model="product.discounted_price_1"
-                    type="number"
-                    min="0"
-                    step="1"
+                    type="text"
+                    @input="e => handleDiscountInput(e, 'discounted_price_1')"
+                    @blur="handleDiscountBlur('discounted_price_1')"
                     class="block p-2 w-full rounded-r-md border-l-0 border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    @blur="product.discounted_price_1 = parseFloat(product.discounted_price_1).toFixed(2)"
                   />
                 </div>
                 <span v-if="product?.errors?.discounted_price_1" class="text-red-500 text-sm italic">
@@ -138,11 +155,10 @@ const validatePrice = (e) => {
                   <input
                     id="discounted_price_2"
                     v-model="product.discounted_price_2"
-                    type="number"
-                    min="0"
-                    step="1"
+                    type="text"
+                    @input="e => handleDiscountInput(e, 'discounted_price_2')"
+                    @blur="handleDiscountBlur('discounted_price_2')"
                     class="block p-2 w-full rounded-r-md border-l-0 border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    @blur="product.discounted_price_2 = parseFloat(product.discounted_price_2).toFixed(2)"
                   />
                 </div>
                 <span v-if="product?.errors?.discounted_price_2" class="text-red-500 text-sm italic">
@@ -158,11 +174,10 @@ const validatePrice = (e) => {
                   <input
                     id="discounted_price_3"
                     v-model="product.discounted_price_3"
-                    type="number"
-                    min="0"
-                    step="1"
+                    type="text"
+                    @input="e => handleDiscountInput(e, 'discounted_price_3')"
+                    @blur="handleDiscountBlur('discounted_price_3')"
                     class="block p-2 w-full rounded-r-md border-l-0 border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    @blur="product.discounted_price_3 = parseFloat(product.discounted_price_3).toFixed(2)"
                   />
                 </div>
                 <span v-if="product?.errors?.discounted_price_3" class="text-red-500 text-sm italic">

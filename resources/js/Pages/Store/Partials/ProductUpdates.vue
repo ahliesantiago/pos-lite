@@ -21,9 +21,9 @@ const form = useForm({
   brand: '',
   description: '',
   price: null,
-  discounted_price_1: null,
-  discounted_price_2: null,
-  discounted_price_3: null,
+  discounted_price_1: '',
+  discounted_price_2: '',
+  discounted_price_3: '',
   stocks: null,
   closest_expiration_date: ''
 });

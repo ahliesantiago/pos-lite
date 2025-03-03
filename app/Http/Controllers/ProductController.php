@@ -74,13 +74,20 @@ class ProductController extends Controller
             'brand' => 'nullable',
             'description' => 'nullable',
             'price' => 'required|numeric',
-            'discounted_price_1' => 'nullable|numeric',
-            'discounted_price_2' => 'nullable|numeric',
-            'discounted_price_3' => 'nullable|numeric',
+            'discounted_price_1' => 'nullable|numeric|min:0',
+            'discounted_price_2' => 'nullable|numeric|min:0',
+            'discounted_price_3' => 'nullable|numeric|min:0',
             'purchase_wholesale_price' => 'nullable|numeric',
             'stocks' => 'required|integer|numeric|min:0',
             'closest_expiration_date' => 'nullable|date',
         ]);
+
+        // Handle null values for discounted prices
+        foreach (['discounted_price_1', 'discounted_price_2', 'discounted_price_3'] as $field) {
+            if ($request[$field] === null || $request[$field] === '') {
+                $validated[$field] = null;
+            }
+        }
 
         Product::create($validated);
         return back();
@@ -94,13 +101,20 @@ class ProductController extends Controller
             'brand' => 'nullable',
             'description' => 'nullable',
             'price' => 'required|numeric',
-            'discounted_price_1' => 'nullable|numeric',
-            'discounted_price_2' => 'nullable|numeric',
-            'discounted_price_3' => 'nullable|numeric',
+            'discounted_price_1' => 'nullable|numeric|min:0',
+            'discounted_price_2' => 'nullable|numeric|min:0',
+            'discounted_price_3' => 'nullable|numeric|min:0',
             'purchase_wholesale_price' => 'nullable|numeric',
             'stocks' => 'required|integer|numeric|min:0',
             'closest_expiration_date' => 'nullable|date',
         ]);
+
+        // Handle null values for discounted prices
+        foreach (['discounted_price_1', 'discounted_price_2', 'discounted_price_3'] as $field) {
+            if ($request[$field] === null || $request[$field] === '') {
+                $validated[$field] = null;
+            }
+        }
 
         Product::find($product_id)->update($validated);
         return back();
