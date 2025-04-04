@@ -5,6 +5,9 @@
         "build": "vite build",
         "dev": "vite"
     },
+    "engines": {
+      "node": "20.x"
+    },
     "devDependencies": {
         "@inertiajs/vue3": "^2.0.3",
         "@tailwindcss/vite": "^4.0.6",
