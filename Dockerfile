@@ -1,3 +1,23 @@
+# PHP Stage - base for composer & artisan setup
+FROM php:8.1-fpm AS php-base
+
+RUN apt-get update && apt-get install -y \
+    curl git libonig-dev libpq-dev \
+    libxml2-dev libzip-dev unzip zip \
+    && docker-php-ext-install pdo pdo_pgsql mbstring zip bcmath \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /var/www/html
+
+# Copy Composer from official image
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Copy PHP app files and install dependencies
+COPY . .
+
+RUN composer install --no-dev --optimize-autoloader
+
+# Node/Vite Builder Stage (after vendor is installed)
 FROM node:18 AS node-builder
 
 WORKDIR /app
@@ -5,44 +25,43 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
+# Copy only frontend-related files
 COPY resources/ ./resources/
 COPY vite.config.* ./
 COPY tailwind.config.* ./
 COPY postcss.config.* ./
 
+COPY --from=php-base /var/www/html/vendor ./vendor
+COPY --from=php-base /var/www/html/.env .env
+
 RUN npm run build
 
+# Final PHP Production Image
 FROM php:8.1-fpm
 
-# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpq-dev \
-    libonig-dev libxml2-dev libzip-dev \
-    && docker-php-ext-install pdo pdo_pgsql mbstring zip bcmath
+    curl git libonig-dev libpq-dev \
+    libxml2-dev libzip-dev unzip zip \
+    && docker-php-ext-install pdo pdo_pgsql mbstring zip bcmath \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /var/www/html
 
-# Copy Composer from official image
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copy app source code
 COPY . .
 
-# Copy Vite-built assets from the previous stage
-COPY --from=node-builder /app/resources ./resources
+# Copy built frontend and vendor
 COPY --from=node-builder /app/public ./public
+COPY --from=node-builder /app/resources ./resources
 
-# Install PHP dependencies (optimized for production)
-RUN composer install --no-dev --optimize-autoloader
+# Copy vendor again (if needed)
+COPY --from=php-base /var/www/html/vendor ./vendor
 
-# Laravel setup
-RUN php artisan config:cache \
+RUN composer dump-autoload --optimize \
+    && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
 
-# Expose the port Laravel will use
 EXPOSE 8000
 
-# Start Laravel
 CMD php artisan serve --host=0.0.0.0 --port=8000
