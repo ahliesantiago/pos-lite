@@ -1,8 +1,7 @@
 #!/bin/bash
 set -e  # Exit on first error
-set -x  # Print each command before executing it (debug visibility)
 
-echo ">>> Starting deploy.sh script execution <<<"
+echo ">>> Laravel boot script <<<"
 
 # Clear and rebuild Laravel caches
 php artisan config:clear
@@ -18,6 +17,9 @@ chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
 
 # Run migrations and seed
+echo ">>> Running migrations <<<"
 php artisan migrate --force
 php artisan db:seed --force
 php artisan migrate:status
+
+exec php artisan serve --host=0.0.0.0 --port=8000

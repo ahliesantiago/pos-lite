@@ -25,12 +25,13 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy only frontend-related files
+# Copy frontend-related files
 COPY resources/ ./resources/
 COPY vite.config.* ./
 COPY tailwind.config.* ./
 COPY postcss.config.* ./
 
+# Copy vendor to allow for SSR if needed
 COPY --from=php-base /var/www/html/vendor ./vendor
 
 RUN npm run build
@@ -46,32 +47,19 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /var/www/html
 
+# Copy app and vendor
 COPY . .
-COPY ./deploy.sh /var/www/html/deploy.sh
-RUN chmod +x /var/www/html/deploy.sh
-
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copy built frontend and vendor
+COPY --from=php-base /var/www/html/vendor ./vendor
 COPY --from=node-builder /app/public ./public
 COPY --from=node-builder /app/resources ./resources
 
-COPY --from=php-base /var/www/html/vendor ./vendor
+# Copy Composer again for runtime usage
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN composer dump-autoload --optimize && \
-    set -e && \
-    php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan view:clear && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache && \
-    chown -R www-data:www-data storage bootstrap/cache && \
-    chmod -R 775 storage bootstrap/cache && \
-    php artisan migrate --force && \
-    php artisan db:seed --force && \
-    php artisan migrate:status
+# Copy entrypoint script
+COPY ./start.sh /start.sh
+RUN chmod +x /start.sh
 
 EXPOSE 8000
 
-CMD php artisan serve --host=0.0.0.0 --port=8000
+CMD ["/start.sh"]
