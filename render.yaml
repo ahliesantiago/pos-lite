@@ -27,3 +27,4 @@ services:
         value: app-db-user
       - key: DB_PASSWORD
         sync: false
+    deployHook: php artisan migrate --force
