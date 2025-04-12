@@ -57,8 +57,7 @@ COPY --from=node-builder /app/resources ./resources
 COPY --from=php-base /var/www/html/vendor ./vendor
 
 RUN composer dump-autoload --optimize \
-
-RUN chown -R www-data:www-data storage bootstrap/cache \
+  && chown -R www-data:www-data storage bootstrap/cache \
   && chmod -R 775 storage bootstrap/cache
 
 RUN chmod +x deploy.sh
