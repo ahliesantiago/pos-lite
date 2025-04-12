@@ -47,8 +47,8 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /var/www/html
 
 COPY . .
-COPY ./deploy.sh ./deploy.sh
-RUN chmod +x deploy.sh
+COPY ./deploy.sh /var/www/html/deploy.sh
+RUN chmod +x /var/www/html/deploy.sh
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
