@@ -6,6 +6,3 @@ services:
     dockerfilePath: ./Dockerfile
     buildCommand: "" # Already handled in Dockerfile
     startCommand: "" # Already handled in Dockerfile
-    deployHooks:
-      - type: post-deploy
-        command: "bash /var/www/html/deploy.sh"

@@ -56,12 +56,21 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY --from=node-builder /app/public ./public
 COPY --from=node-builder /app/resources ./resources
 
-# Copy vendor again (if needed)
 COPY --from=php-base /var/www/html/vendor ./vendor
 
-RUN composer dump-autoload --optimize \
-  && chown -R www-data:www-data storage bootstrap/cache \
-  && chmod -R 775 storage bootstrap/cache
+RUN composer dump-autoload --optimize && \
+    set -e && \
+    php artisan config:clear && \
+    php artisan route:clear && \
+    php artisan view:clear && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache && \
+    chown -R www-data:www-data storage bootstrap/cache && \
+    chmod -R 775 storage bootstrap/cache && \
+    php artisan migrate --force && \
+    php artisan db:seed --force && \
+    php artisan migrate:status
 
 EXPOSE 8000
 
