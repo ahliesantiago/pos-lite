@@ -39,10 +39,10 @@ RUN npm run build
 FROM php:8.3-fpm
 
 RUN apt-get update && apt-get install -y \
-    curl git libonig-dev libpq-dev \
-    libxml2-dev libzip-dev unzip zip \
-    && docker-php-ext-install pdo pdo_pgsql mbstring zip bcmath \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+  curl git libonig-dev libpq-dev \
+  libxml2-dev libzip-dev unzip zip \
+  && docker-php-ext-install pdo pdo_pgsql mbstring zip bcmath \
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www/html
 
@@ -57,9 +57,12 @@ COPY --from=node-builder /app/resources ./resources
 COPY --from=php-base /var/www/html/vendor ./vendor
 
 RUN composer dump-autoload --optimize \
-    && php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+  && php artisan config:cache \
+  && php artisan route:cache \
+  && php artisan view:cache
+
+RUN chown -R www-data:www-data storage bootstrap/cache \
+  && chmod -R 775 storage bootstrap/cache
 
 EXPOSE 8000
 
