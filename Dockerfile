@@ -32,7 +32,6 @@ COPY tailwind.config.* ./
 COPY postcss.config.* ./
 
 COPY --from=php-base /var/www/html/vendor ./vendor
-COPY --from=php-base /var/www/html/.env .env
 
 RUN npm run build
 
