@@ -18,13 +18,13 @@ services:
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
-        value: app-db-host
+        sync: false
       - key: DB_PORT
         value: 5432
       - key: DB_DATABASE
-        value: app-db-name
+        sync: false
       - key: DB_USERNAME
-        value: app-db-user
+        sync: false
       - key: DB_PASSWORD
         sync: false
-    deployHook: php artisan migrate --force
+    deployHook: bash deploy.sh
