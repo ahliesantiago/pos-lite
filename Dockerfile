@@ -1,5 +1,5 @@
 # PHP Stage - base for composer & artisan setup
-FROM php:8.1-fpm AS php-base
+FROM php:8.3-fpm AS php-base
 
 RUN apt-get update && apt-get install -y \
     curl git libonig-dev libpq-dev \
@@ -37,7 +37,7 @@ COPY --from=php-base /var/www/html/.env .env
 RUN npm run build
 
 # Final PHP Production Image
-FROM php:8.1-fpm
+FROM php:8.3-fpm
 
 RUN apt-get update && apt-get install -y \
     curl git libonig-dev libpq-dev \
