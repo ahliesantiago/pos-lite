@@ -14,7 +14,7 @@ services:
       - key: APP_DEBUG
         value: false
       - key: APP_URL
-        value: https://santi-pos-lite.onrender.com
+        sync: false
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
@@ -27,4 +27,6 @@ services:
         sync: false
       - key: DB_PASSWORD
         sync: false
-    deployHook: bash deploy.sh
+    deployHooks:
+      - type: post-deploy
+        command: "./scripts/deploy.sh"

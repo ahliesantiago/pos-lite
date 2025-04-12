@@ -1,7 +1,10 @@
 #!/bin/bash
+echo "Starting deploy.sh script execution"
 
 # Clear and rebuild Laravel caches
 php artisan config:clear
+php artisan route:clear
+php artisan view:clear
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
