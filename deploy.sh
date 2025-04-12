@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Starting deploy.sh script execution"
+echo "=== Starting deploy.sh script execution ==="
 
 # Clear and rebuild Laravel caches
 php artisan config:clear
@@ -14,4 +14,5 @@ chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
 
 # Run migrations
+echo "=== Running migrations ==="
 php artisan migrate --force
