@@ -6,13 +6,6 @@ services:
     dockerfilePath: ./Dockerfile
     buildCommand: "" # Already handled in Dockerfile
     startCommand: "" # Already handled in Dockerfile
-    envVars:
-      - key: DB_CONNECTION
-        value: pgsql
-      - key: DB_HOST
-        sync: false
-      - key: DB_PORT
-        value: 5432
     deployHooks:
       - type: post-deploy
         command: "./deploy.sh"
