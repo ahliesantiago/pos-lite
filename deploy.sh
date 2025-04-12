@@ -2,6 +2,7 @@
 echo "=== Starting deploy.sh script execution ==="
 
 # Clear and rebuild Laravel caches
+echo "=== Clearing and rebuilding Laravel caches ==="
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
