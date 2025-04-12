@@ -8,4 +8,4 @@ services:
     startCommand: "" # Already handled in Dockerfile
     deployHooks:
       - type: post-deploy
-        command: "./deploy.sh"
+        command: "bash /var/www/html/deploy.sh"

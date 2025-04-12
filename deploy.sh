@@ -17,3 +17,4 @@ chmod -R 775 storage bootstrap/cache
 # Run migrations
 echo "=== Running migrations ==="
 php artisan migrate --force
+php artisan db:seed --force

@@ -46,8 +46,11 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /var/www/html
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . .
+COPY ./deploy.sh ./deploy.sh
+RUN chmod +x deploy.sh
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copy built frontend and vendor
 COPY --from=node-builder /app/public ./public
@@ -59,8 +62,6 @@ COPY --from=php-base /var/www/html/vendor ./vendor
 RUN composer dump-autoload --optimize \
   && chown -R www-data:www-data storage bootstrap/cache \
   && chmod -R 775 storage bootstrap/cache
-
-RUN chmod +x deploy.sh
 
 EXPOSE 8000
 
