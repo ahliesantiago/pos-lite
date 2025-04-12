@@ -19,7 +19,7 @@ chmod -R 775 storage bootstrap/cache
 # Run migrations and seed
 echo ">>> Running migrations <<<"
 php artisan migrate --force
-php artisan db:seed --force
+# php artisan db:seed --force
 php artisan migrate:status
 
 exec php artisan serve --host=0.0.0.0 --port=8000
